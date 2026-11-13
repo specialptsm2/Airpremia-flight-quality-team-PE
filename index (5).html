@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="pe-build" content="2026.11.13-4">
+<title>Procedural Error Checklist – AIR PREMIA</title>
+<meta name="theme-color" content="#1D2951">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="PE Check">
+<!--
+  Procedural Error Checklist — 세로형 (LOA Worksheet와 같은 화면 구성)
+  - 외부 인터넷 파일을 쓰지 않습니다. 이 파일 하나에 화면·기능·코드표가 모두 들어 있습니다.
+  - JSON 형식(records 배열과 필드 이름·선택지 값)은 기존 PE 체크리스트(PE-26)와 같습니다. 피로 점검 결과는 별도 "fatigue" 항목으로 함께 들어갑니다.
+  - 피로 점검(Fatigue) 탭은 수면시간·시차 적응·Samn-Perelli만 묻고, 계산이 필요한 시각 입력은 없습니다(fatigue-pe-v3).
+  - 인터넷 연결 없이(오프라인) 모든 기능이 동작합니다.
+-->
+<style>
+:root{
+  --navy:#1D2951; --navy-2:#2b3a6b; --ink:#1f2937; --muted:#6b7280; --line:#d6dae6;
+  --bg:#eef0f5; --card:#fff; --soft:#f5f6fa; --red:#dc2626; --green:#15803d; --amber:#b45309;
+  --r:12px; --tap:44px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",Arial,sans-serif;
+  font-size:16px;line-height:1.45;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+
+/* ── Header ── */
+.top{position:sticky;top:0;z-index:50;background:var(--navy);color:#fff;padding:calc(env(safe-area-inset-top) + 10px) 16px 0}
+.top-row{display:flex;align-items:center;gap:10px;max-width:900px;margin:0 auto}
+.brand{font-weight:900;letter-spacing:.02em;font-size:17px;line-height:1.1}
+.brand small{display:block;font-weight:600;font-size:11px;opacity:.75;letter-spacing:.04em}
+.save-state{margin-left:auto;font-size:12px;opacity:.85;white-space:nowrap}
+.save-state b{color:#86efac}
+.hbtn{min-height:38px;padding:0 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.55);background:transparent;color:#fff;font-weight:800;font-size:13px;letter-spacing:.03em}
+.hbtn.primary{background:#fff;color:var(--navy);border-color:#fff}
+.hbtn.danger{background:#dc2626;border-color:#dc2626;color:#fff}
+.hbtn:active{transform:scale(.97)}
+.tabs{display:flex;gap:4px;max-width:900px;margin:10px auto 0;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1;min-width:max-content;min-height:44px;padding:0 12px;border:0;background:transparent;color:rgba(255,255,255,.7);font-weight:800;font-size:14px;border-bottom:3px solid transparent}
+.tab.on{color:#fff;border-bottom-color:#fff}
+.tab .n{display:inline-block;min-width:20px;padding:0 6px;margin-left:4px;border-radius:10px;background:rgba(255,255,255,.18);font-size:12px}
+
+/* ── Layout ── */
+main{max-width:900px;margin:0 auto;padding:16px 14px calc(40px + env(safe-area-inset-bottom))}
+.panel{display:none}
+.panel.on{display:block}
+.sec-title{display:flex;align-items:center;gap:10px;margin:6px 2px 12px}
+.sec-title h2{margin:0;font-size:19px;font-weight:900;color:var(--navy)}
+.sec-title .sub{font-size:13px;color:var(--muted)}
+.card{background:var(--card);border-radius:var(--r);box-shadow:0 1px 2px rgba(16,24,40,.06),0 0 0 1px rgba(29,41,81,.06);padding:16px;margin-bottom:14px}
+.card h3{margin:0 0 12px;font-size:15px;font-weight:900;color:var(--navy);letter-spacing:.01em}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:1fr 1fr 1fr}
+@media (max-width:560px){.g2,.g3{grid-template-columns:1fr}}
+.f label,.flabel{display:block;font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 5px}
+.in{width:100%;min-height:var(--tap);padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;font-size:16px;outline:none;-webkit-appearance:none;appearance:none}
+.in:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(29,41,81,.12)}
+select.in{padding-right:34px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%231D2951' stroke-width='2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+textarea.in{min-height:110px;resize:none;line-height:1.5;overflow:hidden}
+.prefix{display:flex;align-items:stretch}
+.prefix span{display:flex;align-items:center;padding:0 12px;background:var(--soft);border:1.5px solid var(--line);border-right:0;border-radius:10px 0 0 10px;font-weight:800;color:var(--navy);font-size:15px;white-space:nowrap}
+.prefix .in{border-radius:0 10px 10px 0}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,monospace}
+
+/* segmented choice (crew experience) */
+.crew-row{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:center;margin-bottom:10px}
+.crew-row .who{font-weight:900;color:var(--navy)}
+.seg{display:flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.seg button{flex:1;min-height:var(--tap);border:0;border-left:1.5px solid var(--line);background:#fff;font-weight:800;font-size:14px;color:var(--ink)}
+.seg button:first-child{border-left:0}
+.seg button.on{background:var(--navy);color:#fff}
+.crew-head{display:grid;grid-template-columns:64px 1fr;gap:10px;margin:2px 0 6px}
+.crew-block+.crew-block{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+
+.toggles{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.tog{display:flex;align-items:center;gap:10px;min-height:var(--tap);padding:0 14px;border:1.5px solid var(--line);border-radius:10px;background:#fff;font-weight:800;font-size:14px}
+.tog .box{width:22px;height:22px;border-radius:6px;border:2px solid var(--navy);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px}
+.tog.on{border-color:var(--navy);background:#f0f2f8}
+.tog.on .box{background:var(--navy)}
+
+/* items (observations, threat, error, uas) */
+.item{background:var(--card);border-radius:var(--r);box-shadow:0 1px 2px rgba(16,24,40,.06),0 0 0 1px rgba(29,41,81,.08);margin-bottom:14px;overflow:hidden}
+.item-head{display:flex;align-items:center;gap:10px;padding:10px 12px 10px 16px;background:var(--soft);border-bottom:1px solid var(--line)}
+.badge{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:32px;padding:0 10px;border-radius:8px;background:var(--navy);color:#fff;font-weight:900;font-size:15px}
+.badge.t{background:#1D2951}.badge.e{background:#9a3412}.badge.u{background:#7f1d1d}
+.item-sum{font-size:13px;color:var(--muted);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.icon-btn{width:var(--tap);height:var(--tap);border-radius:10px;border:1.5px solid #f3c7c7;background:#fff;color:var(--red);font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.icon-btn:active{background:var(--red);color:#fff}
+.item-body{padding:14px 16px 16px}
+.comp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;padding:12px;border-radius:10px;background:var(--soft)}
+.comp .pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.comp .neg .flabel{color:var(--red)}
+.comp .pos .flabel{color:var(--green)}
+@media (max-width:560px){.comp{grid-template-columns:1fr}}
+.code-wrap{display:flex;gap:6px}
+.code-wrap .in{flex:1;min-width:0}
+.find-btn{flex:none;width:var(--tap);min-height:var(--tap);border-radius:10px;border:1.5px solid var(--navy);background:#fff;color:var(--navy);font-weight:900;font-size:13px}
+.hint{min-height:18px;margin-top:4px;font-size:12px;line-height:1.35;color:var(--green)}
+.hint.warn{color:var(--amber)}
+.add-btn{width:100%;min-height:52px;border-radius:var(--r);border:2px dashed #aab2cc;background:transparent;color:var(--navy);font-weight:900;font-size:15px}
+.add-btn:active{background:#e3e7f2}
+.empty{padding:22px;text-align:center;color:var(--muted);font-size:14px}
+
+/* section 3 sub-tabs */
+.subtabs{display:flex;gap:6px;margin:0 0 14px;padding:4px;border-radius:12px;background:#dfe3ee;position:sticky;top:var(--hdr,112px);z-index:20}
+.subtab{flex:1;min-height:44px;border:0;border-radius:9px;background:transparent;font-weight:900;font-size:14px;color:var(--navy)}
+.subtab.on{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+
+/* reference */
+.ref-search{position:sticky;top:var(--hdr,112px);z-index:20;background:var(--bg);padding:2px 0 10px}
+.ref-group{margin-bottom:14px}
+.ref-group h4{margin:0 0 6px;font-size:13px;font-weight:900;color:var(--navy);text-transform:uppercase;letter-spacing:.03em}
+.ref-row{display:flex;gap:10px;padding:9px 4px;border-bottom:1px solid #eef0f5;font-size:14px}
+.ref-row .id{flex:none;width:44px;font-weight:900;color:var(--navy)}
+.ref-sec{padding:0;overflow:hidden}
+.ref-sec>h3{margin:0;padding:13px 16px;background:var(--navy);color:#fff;font-size:17px;display:flex;align-items:center;gap:10px;letter-spacing:.02em}
+.ref-sec>h3 .k{flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:#fff;color:var(--navy);font-size:16px}
+.ref-in{padding:6px 16px 10px}
+.ref-col-h{display:block;font-size:15px;font-weight:900;color:var(--navy);background:#e6e9f3;border-left:5px solid var(--navy);border-radius:6px;padding:9px 12px;margin:16px 0 10px}
+.ref-group h4{font-size:12px!important;color:#5a6488!important;letter-spacing:.06em;border-bottom:1.5px solid #dfe3ee;padding:0 0 5px 2px}
+.comp-item{margin:14px 0;padding:2px 0 2px 12px;border-left:4px solid #c7cde0}
+.comp-ref .nm{font-weight:900;color:var(--navy);font-size:15.5px}
+.comp-ref .ds{font-size:13px;color:var(--muted);margin:2px 0 8px}
+.comp-ref .ob{display:flex;gap:8px;font-size:13.5px;padding:5px 0;border-top:1px solid #f0f1f5}
+.comp-ref .ob b{flex:none;width:46px;color:var(--navy)}
+.foot{margin:22px 4px 0;display:flex;justify-content:space-between;font-size:11px;font-weight:800;color:#8a90a6;letter-spacing:.04em;text-transform:uppercase}
+
+/* modal / sheet */
+.dim{position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.45);display:none;align-items:flex-end;justify-content:center}
+.dim.on{display:flex}
+.sheet{width:100%;max-width:720px;max-height:86vh;background:#fff;border-radius:18px 18px 0 0;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom)}
+.sheet-h{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.sheet-h b{font-size:16px;color:var(--navy)}
+.sheet-h .close{margin-left:auto;min-height:40px;padding:0 14px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-weight:800}
+.sheet-b{overflow:auto;padding:12px 16px 20px;-webkit-overflow-scrolling:touch}
+.pick{display:flex;gap:10px;width:100%;text-align:left;padding:12px 6px;border:0;border-bottom:1px solid #eef0f5;background:#fff;font-size:15px}
+.pick:active{background:#eef1f8}
+.pick .id{flex:none;width:44px;font-weight:900;color:var(--navy)}
+.dialog{width:min(92vw,420px);margin:auto;background:#fff;border-radius:16px;padding:20px}
+.dim.center{align-items:center}
+.dialog h3{margin:0 0 6px;color:var(--navy)}
+.dialog p{margin:0 0 14px;color:var(--muted);font-size:14px}
+.dialog .opt{display:block;width:100%;min-height:48px;margin-bottom:8px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-weight:800;text-align:left;padding:0 14px}
+.dialog .opt.danger{background:var(--red);border-color:var(--red);color:#fff;text-align:center}
+.dialog .cancel{display:block;width:100%;min-height:44px;border:0;background:transparent;color:var(--muted);font-weight:800}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:200;background:#111827;color:#fff;padding:12px 16px;border-radius:12px;font-size:14px;max-width:92vw;display:none;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.toast.on{display:flex;gap:12px;align-items:center}
+.toast button{border:0;background:#fff;color:#111827;font-weight:900;border-radius:8px;min-height:34px;padding:0 12px}
+
+.hbtn .n{display:inline-block;min-width:18px;margin-left:5px;padding:0 5px;border-radius:9px;background:rgba(255,255,255,.22);font-size:11px}
+.new-btn{display:block;width:100%;min-height:50px;padding:8px 14px;border-radius:12px;border:1.5px solid var(--navy);background:#fff;color:var(--navy);font-weight:900;font-size:15px;text-align:left}
+.new-btn small{display:block;font-weight:600;font-size:12px;opacity:.8;margin-top:2px}
+.new-btn.primary{background:var(--navy);color:#fff}
+.srow{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid #eef0f5}
+.srow.cur{background:#f0f2f8;border-radius:10px;padding:10px 8px}
+.srow .open{flex:1;min-width:0;text-align:left;border:0;background:transparent;padding:4px 0}
+.srow .t{font-weight:900;color:var(--navy);font-size:15px}
+.srow .m{font-size:12.5px;color:var(--muted);margin-top:2px}
+.srow .tag{display:inline-block;font-size:11px;font-weight:900;padding:1px 7px;border-radius:6px;margin-left:6px;vertical-align:1px}
+.tag.now{background:var(--navy);color:#fff}.tag.sent{background:#dcfce7;color:var(--green)}.tag.unsent{background:#fef3c7;color:var(--amber)}
+.dialog .opt.go{background:var(--navy);border-color:var(--navy);color:#fff;text-align:center}
+/* ── PE 추가 ── */
+.notice{background:#fff8e6;border-left:4px solid #FFB81C;border-radius:10px;padding:12px 14px;font-size:14px;margin-bottom:14px}
+.notice b{color:var(--navy)}
+.notice .s{display:block;color:var(--muted);font-size:13px;margin-top:4px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{flex:1 1 120px;min-height:var(--tap);padding:8px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;font-weight:800;font-size:14px;text-align:left;color:var(--ink)}
+.chip small{display:block;font-weight:600;font-size:12px;color:var(--muted)}
+.chip.on{border-color:var(--navy);background:var(--navy);color:#fff}
+.chip.on small{color:rgba(255,255,255,.8)}
+.chips.col{flex-direction:column}.chips.col .chip{flex:none}
+.q{margin:0 0 18px}
+.q:last-child{margin-bottom:0}
+.q .qt{font-weight:900;font-size:15px;color:var(--ink);margin:0 0 8px}
+.q .qt .qn{color:var(--muted);margin-right:4px}
+.q .qh{font-size:13px;color:var(--muted);margin:-4px 0 8px}
+.sp{display:flex;flex-direction:column;gap:6px}
+.sp .chip{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;flex:none}
+.sp .num{font-weight:900;font-size:17px;text-align:center;border-radius:6px;padding:2px 0;background:var(--soft);color:var(--navy)}
+.sp .chip.on .num{background:#fff;color:var(--navy)}
+.sp .en{display:block;font-size:12px;font-weight:600;color:var(--muted)}
+.sp .chip.on .en{color:rgba(255,255,255,.8)}
+.ims{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center}
+.ims .lbl b{display:inline-block;width:20px;color:var(--navy)}
+.yn{display:flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.yn button{min-height:40px;min-width:64px;border:0;border-left:1.5px solid var(--line);background:#fff;font-weight:800;font-size:14px}
+.yn button:first-child{border-left:0}
+.yn button.on{background:var(--navy);color:#fff}
+.tm{display:grid;grid-template-columns:auto 1fr 110px;gap:8px;align-items:stretch}
+@media (max-width:560px){.tm{grid-template-columns:1fr 1fr}.tm .yn{grid-column:1/-1}}
+.tm .yn button{min-width:58px}
+.conv{font-size:12.5px;color:var(--muted);margin-top:4px;min-height:16px}
+.conv.err{color:var(--red);font-weight:800}
+.calc{font-size:14px;color:var(--muted);margin:4px 0 14px}
+.calc b{color:var(--ink)}
+.warnbox{color:var(--red);font-weight:800;font-size:14px;margin:0 0 12px}
+.aud{border:2px dashed var(--navy)}
+.aud h3 small{font-weight:700;color:var(--muted);font-size:12.5px;margin-left:6px}
+.g{display:inline-block;font-weight:900;padding:1px 12px;border-radius:999px;border:1.5px solid currentColor;font-size:14px}
+.gr0{color:#15803d}.gr1{color:#2a69a8}.gr2{color:#a66700}.gr3{color:#b3261e}.grx{color:#9ca3af}
+.res{width:100%;border-collapse:collapse;font-size:13.5px}
+.res th,.res td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+.res th{background:var(--soft);color:var(--navy);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+.res .tr{font-size:12.5px;color:var(--muted);line-height:1.6}
+.mtabs{display:flex;gap:6px;margin:0 0 14px;padding:4px;border-radius:12px;background:#dfe3ee;flex-wrap:wrap}
+.mtab{flex:1;min-width:max-content;min-height:48px;border:0;border-radius:9px;background:transparent;font-weight:900;font-size:14px;color:var(--navy);padding:4px 10px;line-height:1.2}
+.mtab small{display:block;font-size:11.5px;font-weight:800;opacity:.8}
+.mtab.on{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.fat-auto{margin-top:6px;font-size:12.5px;line-height:1.45;color:var(--muted)}
+.fat-auto b{color:var(--navy)}
+.mode{display:inline-flex;border:1.5px solid var(--line);border-radius:8px;overflow:hidden;margin-left:6px;vertical-align:1px}
+.mode button{border:0;background:#fff;font-size:11.5px;font-weight:900;padding:2px 9px;min-height:24px;color:var(--muted)}
+.mode button.on{background:var(--navy);color:#fff}
+.lbl-row{display:flex;align-items:center;justify-content:space-between;margin:0 0 5px}
+.lbl-row label{margin:0!important}
+details.fref{background:#fff;border-radius:var(--r);padding:12px 16px;margin-bottom:14px;box-shadow:0 0 0 1px rgba(29,41,81,.08)}
+details.fref summary{font-weight:900;color:var(--navy);cursor:pointer}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px;margin:8px 0 10px}
+.tw table,.ref-table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.5}
+.tw th,.tw td,.ref-table th,.ref-table td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.tw thead th,.ref-table th{background:var(--navy);color:#fff;white-space:nowrap}
+.ref-table td.ref-cat{background:var(--soft);font-weight:900;color:var(--navy);white-space:nowrap}
+.gtabs{display:flex;gap:6px;padding:10px 16px 0}
+.gtab{flex:1;min-height:42px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-weight:900;color:var(--navy)}
+.gtab.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.gwrap h4{font-size:15px;color:var(--navy);border-left:4px solid var(--navy);padding-left:8px;margin:18px 0 6px}
+.lv{font-size:11.5px;font-weight:700;border:1px solid currentColor;border-radius:3px;padding:0 5px;white-space:nowrap}
+.lvA{color:#15803d}.lvB{color:#2a69a8}.lvC{color:#a66700}
+</style>
+</head>
+<body>
+
+<header class="top" id="top">
+  <div class="top-row">
+    <div class="brand">AIR PREMIA<small>PROCEDURAL ERROR CHECKLIST</small></div>
+    <div class="save-state" id="saveState">&nbsp;</div>
+    <button class="hbtn" id="btnGuide" type="button">GUIDE</button>
+    <button class="hbtn list" id="btnList" type="button" aria-label="체크리스트 목록">LIST<span class="n" id="cntSheets">1</span></button>
+    <button class="hbtn primary" id="btnSend" type="button">SEND</button>
+    <button class="hbtn danger" id="btnReset" type="button">RESET</button>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-tab="1" type="button">1 Flight Info</button>
+    <button class="tab" data-tab="2" type="button">2 Fatigue<span class="n" id="cntFat">0</span></button>
+    <button class="tab" data-tab="3" type="button">3 Errors<span class="n" id="cntErr">0</span></button>
+  </nav>
+</header>
+
+<main id="app">
+  <!-- ───────── 1. FLIGHT INFORMATION ───────── -->
+  <section class="panel on" id="panel1">
+    <div class="sec-title"><h2>1. Flight Information</h2></div>
+    <div class="card">
+      <div class="grid g2">
+        <div class="f"><label for="date">Date</label><input class="in" id="date" type="date" data-bind="info.date"></div>
+        <div class="f"><label for="route">Route</label><select class="in" id="route" data-bind="info.route"></select></div>
+        <div class="f"><label for="tkoLand">TKO / LAND</label><select class="in" id="tkoLand" data-bind="info.tko_land"></select></div>
+        <div class="f"><label for="auditor">Auditor</label><select class="in" id="auditor" data-bind="info.auditor"></select></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>작성 순서</h3>
+      <div style="font-size:14px;line-height:1.7">
+        ① <b>출두 시</b> — <b>2 Fatigue</b> 탭에서 편성을 고르고, 승무원별 Part 1~2를 승무원이 직접 작성 (1분 이내)<br>
+        ② <b>TOD 직전</b> — 3·4 PILOT 편성의 이착륙 담당 승무원에게 심사원이 Part 3 질문 (2 PILOT은 TOD 점검 없음)<br>
+        ③ <b>Error 발생 시</b> — <b>3 Errors</b> 탭에 기록. Fatigue 칸은 Committed by·Phase에 맞는 피로 등급이 자동으로 들어갑니다<br>
+        ④ <b>SEND</b> — PDF와 JSON을 한 번에 보냅니다
+      </div>
+    </div>
+    <div class="foot"><span>Procedural Error Checklist · PE-26</span><span class="buildTag"></span></div>
+  </section>
+
+  <!-- ───────── 2. FATIGUE ───────── -->
+  <section class="panel" id="panel2">
+    <div class="sec-title"><h2>2. Crew Fatigue Check</h2><span class="sub">운항승무원 피로 점검</span></div>
+    <div class="notice"><b>비처벌·비식별 원칙</b> — 이 점검은 개인을 평가하거나 비행 투입 여부를 정하는 데 쓰이지 않습니다. 이름을 적지 않으며, 응답은 피로 위험 요인 분석에만 사용됩니다. 실제와 다르게 적으면 안전 개선의 근거가 사라지니 있는 그대로 답해 주세요.
+      <span class="s">지금 비행에 부적합할 정도로 피곤하다면 이 점검과 별개로 FOM 4.14.1에 따라 기장과 OCC에 알려 주세요.</span></div>
+    <div class="card">
+      <h3>편성</h3>
+      <div id="crewChips"></div>
+    </div>
+    <div id="fatBody"></div>
+    <details class="fref"><summary>판정 기준과 근거</summary><div class="gwrap">
+  <h4>편성별 근무 형태와 PE 적용</h4>
+  <div class="tw"><table>
+    <thead><tr><th>편성</th><th>담당</th><th>출발 단계 error<br>(PreDep · TKO/CLB · CRZ)</th><th>착륙 단계 error<br>(DES/APP/LDG · TAXI-IN)</th></tr></thead>
+    <tbody>
+      <tr><td>2 PILOT (1 SET)</td><td>기장·부기장 모두 교대 없이 이착륙 담당</td><td>근무 전 등급</td><td>근무 전 등급 (TOD 점검 없음)</td></tr>
+      <tr><td rowspan="2">3 PILOT<br>(2 CAPT · 1 FO)</td><td>이착륙 담당 기장 · FO (FO는 두 구간 모두 이착륙 담당)</td><td>근무 전 등급</td><td><b>TOD 등급</b> (기내 휴식 반영)</td></tr>
+      <tr><td>ENROUTE 담당 기장</td><td>CRZ 단계만 근무 전 등급</td><td>해당 없음</td></tr>
+      <tr><td rowspan="2">4 PILOT (2 SET)</td><td>이착륙 담당 SET</td><td>근무 전 등급</td><td><b>TOD 등급</b> (기내 휴식 반영)</td></tr>
+      <tr><td>ENROUTE 담당 SET</td><td>CRZ 단계만 근무 전 등급</td><td>해당 없음</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">복편은 기장(3 PILOT)이나 SET(4 PILOT)의 이착륙/ENROUTE 담당이 서로 바뀝니다. "복편 새로 작성"을 누르면 자동으로 바꿔 줍니다. PE error는 발생 시각이 아니라 비행 단계로 등급을 고르며, error를 낸 승무원(PF 또는 PM)의 점검표 결과를 사용합니다.</p>
+
+  <h4>판정 규칙</h4>
+  <div class="tw"><table>
+    <thead><tr><th>구분</th><th>근무 전 등급 (Part 1~2)</th><th>TOD 등급 (Part 3)</th><th>출처</th></tr></thead>
+    <tbody>
+      <tr><td>위험 신호 R1</td><td>최근 24시간 수면 5시간 미만 (2번)</td><td>근무 전 24시간 수면 + 기내 수면이 5시간 미만</td><td>Dawson &amp; McCulloch (2005)</td></tr>
+      <tr><td>위험 신호 R2</td><td>-</td><td>실제 기내 수면이 배정된 휴식 시간의 절반 미만 (7·8번)</td><td>사내 기준</td></tr>
+      <tr><td>보조 요인 (시차)</td><td colspan="2">인천 출발 전 72시간 안에 시차 4시간 이상 지역에서 복귀 (3번, 인천 출발 편만 · 해외 출발 편은 자동으로 제외) · 신체시계 적응 중 (4번) · 시차로 수면 방해 (5번). TOD 등급에도 그대로 반영</td><td>Doc 9966 시차·신체시계 개념, 사내 기준</td></tr>
+      <tr><td>Samn-Perelli</td><td>근무 전 응답 (1번)</td><td>TOD 응답 (6번)</td><td>Samn &amp; Perelli (1982). 구간은 사내 기준</td></tr>
+    </tbody>
+  </table></div>
+  <div class="tw"><table>
+    <thead><tr><th>등급</th><th>조건 (하나라도 해당하면 그 등급, 높은 등급 우선)</th></tr></thead>
+    <tbody>
+      <tr><td><span class="g gr3">High</span></td><td>위험 신호 2개 · 위험 신호 1개 + 보조 요인 2개 이상 · SP 6~7</td></tr>
+      <tr><td><span class="g gr2">Medium</span></td><td>위험 신호 1개 · SP 5 · 보조 요인 2개 이상</td></tr>
+      <tr><td><span class="g gr1">Low</span></td><td>SP 4 · 보조 요인 1개</td></tr>
+      <tr><td><span class="g gr0">None</span></td><td>해당 없음</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">모든 질문은 보기 중에서 고르기만 하면 되고, 시각 입력이나 계산은 없습니다. 등급은 응답을 고르는 즉시 자동으로 정해집니다. 근무 전 등급과 TOD 등급은 같은 등급표를 씁니다. 등급 구분은 사내 기준이며, 운영 데이터로 검증한 뒤 확정합니다. TOD 등급의 수면 합산은 응답 구간의 하한값(5시간 미만은 3시간)을 써서 보수적으로 계산합니다.</p>
+
+  <h4>참고 문헌과 반영 내용</h4>
+  <div class="tw"><table>
+    <thead><tr><th>문헌</th><th>반영 내용</th><th>확인</th></tr></thead>
+    <tbody>
+      <tr><td>ICAO Doc 9966, FRMS Manual for Regulators (2012)</td><td>시차·신체시계 적응, 수면 제한의 누적, 회복에 제한 없는 수면 2일 밤 필요, microsleep, 비난이 아닌 안전 결함 식별 원칙</td><td><span class="lv lvA">원문 대조</span></td></tr>
+      <tr><td>IATA/ICAO/IFALPA Fatigue Management Guide for Airline Operators (2015)</td><td>Samn-Perelli·KSS 측정 도구 수록, 깨어 있은 시간과 오류 증가(NTSB 자료), 피로할수록 자기 평가 부정확</td><td><span class="lv lvA">원문 대조</span> 부록 문구는 미대조</td></tr>
+      <tr><td>Dawson &amp; McCulloch, Sleep Medicine Reviews 9 (2005)</td><td>24시간 수면 5시간 규칙</td><td><span class="lv lvB">2차 인용 확인</span> ATSB AR-2015-095</td></tr>
+      <tr><td>Australian Defence Flight Safety Bureau, Aviation Fatigue Management Guidebook v2</td><td>수면량과 Samn-Perelli를 묶은 항공 승무원 근무 전 자가점검(FRAT) 구조</td><td><span class="lv lvA">원문 대조</span></td></tr>
+      <tr><td>Samn &amp; Perelli (1982), USAF School of Aerospace Medicine</td><td>7단계 피로 척도 원문</td><td><span class="lv lvC">표준 문구 사용</span> 원문 미대조</td></tr>
+      <tr><td>ATSB AO-2018-022 안전 이슈</td><td>수면 자가 기록이 투입 판단에 쓰이자 기록이 왜곡된 사례 → 비처벌·분석 전용 원칙</td><td><span class="lv lvA">원문 대조</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">ICAO Doc 9966 제2판(2016)은 원문을 확인하지 못했습니다. 정식 채택 전 사내 보유본으로 대조가 필요합니다.</p>
+</div></details>
+    <div class="foot"><span>Procedural Error Checklist · PE-26</span><span class="buildTag"></span></div>
+  </section>
+
+  <!-- ───────── 3. ERRORS ───────── -->
+  <section class="panel" id="panel3">
+    <div class="sec-title"><h2>3. Procedural Errors</h2><span class="sub">Error 하나당 한 장</span></div>
+    <div id="errList"></div>
+    <button type="button" class="add-btn" data-act="add-err">+ Add Error</button>
+    <div class="foot"><span>Procedural Error Checklist · PE-26</span><span class="buildTag"></span></div>
+  </section>
+</main>
+
+<!-- GUIDE -->
+<div class="dim" id="guideDim">
+  <div class="sheet" role="dialog" aria-modal="true" style="max-width:900px;max-height:92vh">
+    <div class="sheet-h"><b>Guidance</b><button type="button" class="close" data-act="guide-close">닫기</button></div>
+    <div class="gtabs"><button type="button" class="gtab on" data-g="code">ERROR CODE</button><button type="button" class="gtab" data-g="rc">ROOT CAUSE &amp; FACTORS</button></div>
+    <div class="sheet-b gwrap" id="guideCode"></div>
+    <div class="sheet-b gwrap" id="guideRc" hidden>
+        <div style="margin-bottom: 30px;">
+            <div style="font-weight:900; margin-bottom:8px; color:var(--sc); font-size:15px; border-left: 4px solid var(--sc); padding-left: 8px;">Fatigue (피로도)</div>
+            <table class="ref-table">
+                <thead><tr><th style="width:12%;">구분</th><th style="width:40%;">정의</th><th style="width:48%;">예시</th></tr></thead>
+                <tbody>
+                    <tr><td class="ref-cat">None</td><td>피로 징후가 없으며 주의력과 인지 기능이 정상적으로 유지되는 상태</td><td>alertness 정상, 집중력 저하 없음, 반응속도 정상</td></tr>
+                    <tr><td class="ref-cat">Low</td><td>경미한 피로가 있으나 작업 수행과 상황 인식에는 거의 영향을 주지 않는 상태</td><td>약간의 피로감, 집중력 유지 가능, 수행 능력 영향 미미, 장시간 근무 초기 단계</td></tr>
+                    <tr><td class="ref-cat">Medium</td><td>피로로 인해 집중력과 주의 분배 능력이 감소하며 작업 수행에 일부 영향을 줄 수 있는 상태</td><td>집중력 감소, 주의 분산 어려움, 반응속도 약간 저하, 장시간 비행 후반, 수면 부족</td></tr>
+                    <tr><td class="ref-cat">High</td><td>심한 피로로 인해 주의력, 판단력 또는 상황인식이 현저히 저하된 상태</td><td>alertness 크게 감소, monitoring 능력 저하, error risk 증가, severe sleep loss, 장시간 duty 후반</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-bottom: 30px;">
+            <div style="font-weight:900; margin-bottom:8px; color:var(--sc); font-size:15px; border-left: 4px solid var(--sc); padding-left: 8px;">Attention (주의 집중 상태)</div>
+            <table class="ref-table">
+                <thead><tr><th style="width:12%;">구분</th><th style="width:20%;">정의</th><th style="width:23%;">판단 기준</th><th style="width:28%;">예시</th><th style="width:17%;">비고</th></tr></thead>
+                <tbody>
+                    <tr><td class="ref-cat">Normal Scan</td><td>체계적으로 여러 정보원 스캔</td><td>계기와 외부 환경을 체계적으로 스캔하며 여러 정보원에 주의를 분산하여 상황인식을 유지하는 상태</td><td>PFD / ND / engine / outside view를 주기적으로 확인, ATC / PM cross-check 정상, abnormal fixation 없음</td><td>abnormal fixation 없음</td></tr>
+                    <tr><td class="ref-cat">Channelized</td><td>특정 작업에 주의 집중</td><td>특정 작업이나 정보원에 주의가 집중되어 다른 관련 정보에 대한 모니터링이 감소한 상태</td><td>FMS programming에 집중하면서 altitude deviation monitoring 감소, abnormal checklist 수행 중 flight path monitoring 감소</td><td>주의 협착</td></tr>
+                    <tr><td class="ref-cat">Fixation</td><td>한 가지 요소에 고착됨</td><td>단일 문제나 작업에 주의가 지속적으로 집중되어 변화하는 상황이나 다른 중요한 정보가 적절히 인지되지 않는 상태</td><td>FMS 문제 해결에 집착, landing gear 문제 해결 중 altitude deviation 인지 못함</td><td>위험 상태</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <div style="font-weight:900; margin-bottom:8px; color:var(--sc); font-size:15px; border-left: 4px solid var(--sc); padding-left: 8px;">Workload (작업 부하)</div>
+            <table class="ref-table">
+                <thead><tr><th style="width:12%;">구분</th><th style="width:20%;">정의</th><th style="width:23%;">판단 기준</th><th style="width:28%;">예시</th><th style="width:17%;">비고</th></tr></thead>
+                <tbody>
+                    <tr><td class="ref-cat">None</td><td>작업 요구 거의 없음</td><td>단일 단순 task, 시간적 여유 충분, 인지 부하 거의 없음</td><td>대기 상태, monitoring only</td><td>부하 없음</td></tr>
+                    <tr><td class="ref-cat">Low</td><td>단일 또는 단순 작업 수행</td><td>시간 압박 거의 없음, 여유 있는 상황 인지 가능</td><td>단일 또는 단순 작업 수행, 시간 압박 거의 없음, 여유 있는 상황 인지 가능, routine task, interruption 없음</td><td>정상 여유</td></tr>
+                    <tr><td class="ref-cat">Medium</td><td>여러 작업 동시 수행</td><td>일정 수준의 time pressure, task prioritization 필요, 집중 필요한 상황</td><td>multitasking, coordination 필요</td><td>주의 필요</td></tr>
+                    <tr><td class="ref-cat">High</td><td>작업 요구가 개인 능력에 근접하거나 초과</td><td>강한 time pressure, 빈번한 interruption, situational awareness 유지 어려움</td><td>task overload, emergency 대응</td><td>과부하</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <div style="font-weight:900; margin-bottom:8px; color:var(--sc); font-size:15px; border-left: 4px solid var(--sc); padding-left: 8px;">Time Pressure (시간 압박)</div>
+            <table class="ref-table">
+                <thead><tr><th style="width:12%;">구분</th><th style="width:40%;">판단 기준</th><th style="width:48%;">상세 설명</th></tr></thead>
+                <tbody>
+                    <tr><td class="ref-cat">None</td><td>시간 여유 충분</td><td>긴급한 결정이나 조치가 필요 없는 안정적인 상태</td></tr>
+                    <tr><td class="ref-cat">Low</td><td>약간의 시간 제약</td><td>일반적인 절차 수행에는 문제가 없으나 시간 관리가 시작되는 단계</td></tr>
+                    <tr><td class="ref-cat">Medium</td><td>작업 우선순위 조정 필요</td><td>가용한 시간 내에 작업을 마치기 위해 효율적인 우선순위 배분이 필요한 상태</td></tr>
+                    <tr><td class="ref-cat">High</td><td>즉각적인 대응 요구</td><td>매우 촉박한 시간 내에 결정과 행동이 이루어져야 하는 높은 압박 상태</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div>
+            <div style="font-weight:900; margin-bottom:8px; color:var(--sc); font-size:15px; border-left: 4px solid var(--sc); padding-left: 8px;">Root Cause Classification (Root Cause 정의 및 판단기준)</div>
+            <table class="ref-table">
+                <thead><tr><th style="width:12%;">구분</th><th style="width:20%;">정의</th><th style="width:23%;">판단기준</th><th style="width:28%;">예시</th><th style="width:17%;">비고</th></tr></thead>
+                <tbody>
+                    <tr><td class="ref-cat">Slip</td><td>알고 있었고 수행 의도도 있었지만 실행 과정에서 실수한 경우</td><td>절차 이해는 정확했음, 수행 직전까지 인지 상태 정상, 행동 단계에서 실수 발생</td><td>스위치 잘못 선택, 숫자 입력 오타, 레버 반대 방향 조작</td><td>→ 잘못 판단 시 Mistake</td></tr>
+                    <tr><td class="ref-cat">Lapse</td><td>해야 한다는 사실 자체를 순간적으로 기억하지 못함</td><td>행동 자체가 발생하지 않음, Reminder 없으면 계속 누락</td><td>Checklist item skip, Callout 미실시, After takeoff flow 중 항목 누락</td><td>→ 기억 못함</td></tr>
+                    <tr><td class="ref-cat">Mistake</td><td>행동은 의도적으로 했지만 판단이 틀린 경우</td><td>본인은 맞다고 믿고 수행, SOP 또는 규정 이해 오류</td><td>잘못된 flap 선택, 잘못된 speed 계산, Limitation 오해</td><td></td></tr>
+                    <tr><td class="ref-cat">Intentional Deviation</td><td>SOP를 알고 있었지만 의도적으로 따르지 않음</td><td>시간 단축 / 편의 / 습관 목적, 위험 인지했지만 실행</td><td>Briefing 생략, Checklist shortcut, OP 순서 변경</td><td></td></tr>
+                    <tr><td class="ref-cat">Training Gap</td><td>훈련 내용 또는 숙련 부족 때문에 발생</td><td>절차 자체 이해 불완전 수행, 속도 현저히 느림, 반복 오류 발생</td><td>Rare procedure 수행 실패, Memory item recall 실패</td><td></td></tr>
+                    <tr><td class="ref-cat">SOP Design Issue</td><td>절차 구조 자체가 오류 유발이 가능하게 설계됨</td><td>동일 SOP 반복 오류 발생, 여러 crew에서 동일 실수 발생</td><td>Step sequence 비직관적, 작업 흐름과 불일치, Callout timing 모호</td><td></td></tr>
+                    <tr><td class="ref-cat">CRM Breakdown</td><td>Crew interaction 문제로 오류 발생 또는 확대</td><td>Cross-check 있었으면 예방 가능, Monitoring 있었으면 탐지 가능</td><td>PM monitoring 실패, Challenge 안함, Authority gradient 영향</td><td></td></tr>
+                    <tr><td class="ref-cat">Environmental Factor</td><td>개인·절차·조직이 아니라 운항 물리적 환경 조건이 오류 발생에 직접 기여함</td><td>동일 crew라도 환경 조건이 정상이었다면 발생하지 않았을 것, 외부 조건이 인지 또는 수행을 직접 방해, 환경 요인 제거 시 재현되지 않음</td><td>야간 / 저조도에서 스위치 오선택, Turbulence 중 CDU 입력 오류, 주파수 혼잡 또는 무선 품질 저하로 clearance 오청취, Ramp 소음 · 눈부심으로 callout 누락</td><td>→ 스케줄 · 문화 원인이면 Organizational Factor</td></tr>
+                    <tr><td class="ref-cat">Organizational Factor</td><td>개인이나 절차의 문제가 아니라 조직 환경의 영향</td><td>스케줄 압박, 문화적 shortcut 허용 분위기, SOP training 부족</td><td>Turnaround 압박 때문에 checklist rush, Fleet 전체 shortcut</td><td>→ 물리적 환경 원인이면 Environmental Factor</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- 목록 -->
+<div class="dim" id="listDim">
+  <div class="sheet" role="dialog" aria-modal="true">
+    <div class="sheet-h"><b>체크리스트 목록</b><button type="button" class="close" data-act="list-close">닫기</button></div>
+    <div style="padding:12px 16px 4px;display:grid;gap:8px">
+      <button type="button" class="new-btn primary" data-act="sheet-return">↩ 복편 새로 작성<small>날짜·심사원·TKO/LAND·피로 점검 Part 1~2 복사 · 구간과 이착륙/ENROUTE 담당은 반대로 · TOD(Part 3)와 Error는 새로</small></button>
+      <button type="button" class="new-btn" data-act="sheet-new">+ 빈 체크리스트 새로 작성</button>
+    </div>
+    <div class="sheet-b" id="sheetList"></div>
+  </div>
+</div>
+
+<!-- RESET -->
+<div class="dim center" id="resetDim">
+  <div class="dialog" id="resetStep1">
+    <h3>Reset</h3><p>초기화할 범위를 고르세요.</p>
+    <button type="button" class="opt" data-reset="1">1 Flight Info</button>
+    <button type="button" class="opt" data-reset="2">2 Fatigue (피로 점검)</button>
+    <button type="button" class="opt" data-reset="3">3 Errors</button>
+    <button type="button" class="opt danger" data-reset="all">ALL</button>
+    <button type="button" class="cancel" data-act="reset-close">Cancel</button>
+  </div>
+  <div class="dialog" id="resetStep2" hidden>
+    <h3 style="color:var(--red)">정말 초기화할까요?</h3><p id="resetMsg"></p>
+    <button type="button" class="opt danger" data-act="reset-do">YES, RESET</button>
+    <button type="button" class="cancel" data-act="reset-back">돌아가기</button>
+  </div>
+</div>
+
+<!-- 확인 창 -->
+<div class="dim center" id="askDim">
+  <div class="dialog" role="alertdialog" aria-modal="true">
+    <h3 id="askTitle">확인</h3><p id="askMsg"></p>
+    <button type="button" class="opt go" data-act="ask-ok" id="askOk">확인</button>
+    <button type="button" class="cancel" data-act="ask-cancel">취소</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span><button type="button" id="toastBtn" hidden></button></div>
+
+<script>
+const BUILD = document.querySelector('meta[name="pe-build"]').content;
+const FORM = { no: 'PE-26', revLabel: 'Procedural Error Checklist' };
+const ROUTES = [["JAPAN / ASIA", ["ICN-NRT", "NRT-ICN", "ICN-HKG", "HKG-ICN", "ICN-SGN", "SGN-ICN", "ICN-BKK", "BKK-ICN"]], ["AMERICA (West)", ["ICN-HNL", "HNL-ICN", "ICN-SFO", "SFO-ICN", "ICN-LAX", "LAX-ICN"]], ["AMERICA (East)", ["ICN-EWR", "EWR-ICN", "ICN-IAD", "IAD-ICN"]]];
+const CODE_GROUPS = [["SOP", ["200. Failure to cross-verify MCP / FMS / CDU / FMA mode changes", "201. Failure to cross-verify altimeter settings", "202. Failure to cross-verify ATC clearances", "203. Failure to execute a go-around after passing procedural bottom lines of an unstable approach", "204. Sterile cockpit violations", "205. Performing correct task procedures out of sequence", "206. PF makes own MCP / FMS changes", "207. PF makes own Flight control setting", "208. Both pilots head down", "209. PM/PF duty allocation not clear", "210. Omitted handover procedures – Flight control / communication", "211. Setting altimeters before the transition altitude", "212. Using equipment placarded INOP", "213. A/C operation with unresolved MEL", "214. Failure to cross-verify paperwork or documentation", "229. Other SOPs errors"]], ["SOP – Detail (229 derived)", ["400. Failure to comply with device unplug procedure before engine start", "401. Failure to confirm ground equipment clearance before pushback or after engine start (Bridge, GPU, Gear pin)", "402. Performing flight control check without verifying lockout pin removed", "403. Failure to comply with headset and boom microphone wearing procedure", "404. Failure to operate AC system according to MEL", "405. Omitted verification of required takeoff fuel before takeoff", "406. Failure to transfer EICAS to the PF side prior to takeoff", "407. Failure to confirm takeoff reminder", "408. Failure to cross-verify runway before takeoff (Holding sign, ND, RWY Designation marking, heading)", "409. Failure to comply with exterior lights procedure (10000ft, Logo, RWY Turnoff, Landing lights)", "410. Inadequate flight path, systems monitoring during crew absence", "411. Failure to verify required items before arming APP, LOC mode (IDENT, Deviation pointer, Intercept HDG, Clearance)", "412. Failure to comply with landing roll procedure (Manual brake, Reverse thrust Call out)", "413. Performing wrong procedure for EOT-in"]], ["Checklist", ["230. Missed Checklist item", "231. Omitted / forgot Checklist", "232. Wrong Checklist performed", "233. Checklist performed late or wrong time", "234. Incorrect challenge and response", "235. Response without verification", "236. Completed Checklist not called \"complete\"", "237. Checklist performed by memory", "238. Self-initiated / performed Checklist", "249. Other Checklist errors"]], ["Briefing", ["250. Incomplete or omitted T/O briefing", "251. Incomplete or omitted approach briefing", "252. Incomplete or omitted Flight attendant briefing", "253. Incomplete or omitted engine-out briefing", "259. Other briefing errors"]], ["Callout", ["260. Omitted callouts", "261. Incorrect callouts", "269. Other callout errors"]], ["Documentation", ["270. Incorrect weight and balance read", "271. Incorrect fuel information recorded", "272. Misinterpreted items on the documents (Flight plan / WX charts / NOTAM / dispatch release / FMLB)", "273. Missed items on the documents", "274. Incorrect runway information recorded", "275. Incorrect performance calculations", "276. Incorrect ATIS / ATC clearance recorded", "277. Incorrect application of MEL", "278. Incorrect application of manuals / charts", "279. Omitted / incorrect FMLB entries", "289. Other documentation errors"]]];
+const GUIDE_TYPES = {"200": "Monitoring Failure", "201": "Monitoring Failure", "202": "Monitoring Failure", "203": "Incorrect Action", "204": "Incorrect Action", "205": "Wrong Sequence", "206": "Incorrect Action", "207": "Incorrect Action", "208": "Monitoring Failure", "209": "Incorrect Action", "210": "Omission", "211": "Incorrect Action", "212": "Incorrect Action", "213": "Incorrect Action", "214": "Monitoring Failure", "229": "All", "230": "Omission", "231": "Omission", "232": "Incorrect Action", "233": "Late Execution", "234": "Incorrect Action", "235": "Monitoring Failure", "236": "Omission", "237": "Incorrect Action", "238": "Incorrect Action", "249": "All", "250": "Omission", "251": "Omission", "252": "Omission", "253": "Omission", "259": "All", "260": "Omission", "261": "Incorrect Action", "269": "All", "270": "Incorrect Action", "271": "Incorrect Action", "272": "Incorrect Action", "273": "Omission", "274": "Incorrect Action", "275": "Incorrect Action", "276": "Incorrect Action", "277": "Incorrect Action", "278": "Incorrect Action", "279": "Omission", "289": "All"};
+const GUIDE_ROWS = [["SOPs", "200", "Failure to cross-verify MCP / FMS / CDU / FMA mode changes", "Monitoring Failure"], ["SOPs", "201", "Failure to cross-verify altimeter settings", "Monitoring Failure"], ["SOPs", "202", "Failure to cross-verify ATC clearances", "Monitoring Failure"], ["SOPs", "203", "Failure to execute a go-around 후 unstable approach", "Incorrect Action"], ["SOPs", "204", "Sterile cockpit violations", "Incorrect Action"], ["SOPs", "205", "Performing correct task procedures out of sequence", "Wrong Sequence"], ["SOPs", "206", "PF makes own MCP / FMS changes", "Incorrect Action"], ["SOPs", "207", "PF makes own Flight control setting", "Incorrect Action"], ["SOPs", "208", "Both pilots head down", "Monitoring Failure"], ["SOPs", "209", "PM/PF duty allocation not clear", "Incorrect Action"], ["SOPs", "210", "Omitted handover procedures", "Omission"], ["SOPs", "211", "Setting altimeters before transition altitude", "Incorrect Action"], ["SOPs", "212", "Using equipment placarded INOP", "Incorrect Action"], ["SOPs", "213", "A/C operation with unresolved MEL", "Incorrect Action"], ["SOPs", "214", "Failure to cross-verify paperwork", "Monitoring Failure"], ["SOPs", "229", "Other SOPs errors", "All"], ["Checklists", "230", "Missed Checklist item", "Omission"], ["Checklists", "231", "Omitted / forgot Checklist", "Omission"], ["Checklists", "232", "Wrong Checklist performed", "Incorrect Action"], ["Checklists", "233", "Checklist performed late or wrong time", "Late Execution"], ["Checklists", "234", "Incorrect challenge and response", "Incorrect Action"], ["Checklists", "235", "Response without verification", "Monitoring Failure"], ["Checklists", "236", "Completed Checklist not called “complete”", "Omission"], ["Checklists", "237", "Checklist performed by memory", "Incorrect Action"], ["Checklists", "238", "Self-initiated / performed Checklist", "Incorrect Action"], ["Checklists", "249", "Other Checklist errors", "All"], ["Briefings", "250", "Incomplete or omitted T/O briefing", "Omission"], ["Briefings", "251", "Incomplete or omitted approach briefing", "Omission"], ["Briefings", "252", "Incomplete or omitted Flight attendant briefing", "Omission"], ["Briefings", "253", "Incomplete or omitted engine-out briefing", "Omission"], ["Briefings", "259", "Other briefing errors", "All"], ["Callouts", "260", "Omitted callouts", "Omission"], ["Callouts", "261", "Incorrect callouts", "Incorrect Action"], ["Callouts", "269", "Other callout errors", "All"], ["Documentation", "270", "Incorrect weight and balance read", "Incorrect Action"], ["Documentation", "271", "Incorrect fuel information recorded", "Incorrect Action"], ["Documentation", "272", "Misinterpreted items on the documents", "Incorrect Action"], ["Documentation", "273", "Missed items on the documents", "Omission"], ["Documentation", "274", "Incorrect runway information recorded", "Incorrect Action"], ["Documentation", "275", "Incorrect performance calculations", "Incorrect Action"], ["Documentation", "276", "Incorrect ATIS / ATC clearance recorded", "Incorrect Action"], ["Documentation", "277", "Incorrect application of MEL", "Incorrect Action"], ["Documentation", "278", "Incorrect application of manuals / charts", "Incorrect Action"], ["Documentation", "279", "Omitted / incorrect FMLB entries", "Omission"], ["Documentation", "289", "Other documentation errors", "All"], ["SOPs – Detail", "400", "Failure to comply with device unplug procedure before engine start", "-"], ["SOPs – Detail", "401", "Failure to confirm ground equipment clearance before pushback or after engine start (Bridge, GPU, Gear pin)", "-"], ["SOPs – Detail", "402", "Performing flight control check without verifying lockout pin removed", "-"], ["SOPs – Detail", "403", "Failure to comply with headset and boom microphone wearing procedure", "-"], ["SOPs – Detail", "404", "Failure to operate AC system according to MEL", "-"], ["SOPs – Detail", "405", "Omitted verification of required takeoff fuel before takeoff", "-"], ["SOPs – Detail", "406", "Failure to transfer EICAS to the PF side prior to takeoff", "-"], ["SOPs – Detail", "407", "Failure to confirm takeoff reminder", "-"], ["SOPs – Detail", "408", "Failure to cross-verify runway before takeoff (Holding sign, ND, RWY Designation marking, heading)", "-"], ["SOPs – Detail", "409", "Failure to comply with exterior lights procedure (10000ft, Logo, RWY Turnoff, Landing lights)", "-"], ["SOPs – Detail", "410", "Inadequate flight path, systems monitoring during crew absence", "-"], ["SOPs – Detail", "411", "Failure to verify required items before arming APP, LOC mode (IDENT, Deviation pointer, Intercept HDG, Clearance)", "-"], ["SOPs – Detail", "412", "Failure to comply with landing roll procedure (Manual brake, Reverse thrust Call out)", "-"], ["SOPs – Detail", "413", "Performing wrong procedure for EOT-in", "-"]];
+
+/* ════════════════════════════════════════════════════════════════
+ *  선택지 (기존 PE 체크리스트와 같은 값 — 엑셀 매크로 호환)
+ * ════════════════════════════════════════════════════════════════ */
+const OPT = {
+  tko_land: ['CAPT / CAPT', 'FO / FO', 'CAPT / FO', 'FO / CAPT'],
+  phase: ['PreDep / Taxi', 'TKO / CLB', 'CRZ', 'DES / APP / LDG', 'TAXI-IN', 'ALL'],
+  auditor: ['고희덕', '경진수', '조성식', '정진수', '한정권'],
+  error_number: ['E1', 'E2', 'E3', 'E4', 'E5', 'E6'],
+  error_type: ['Omission', 'Incorrect action', 'Wrong sequence', 'Late execution', 'Monitoring failure', 'All'],
+  detection_time: ['Immediate (during task)', 'Delayed (later stage)', 'Undetected'],
+  committed_by: ['Capt', 'FO', 'PF(Capt)', 'PF(FO)', 'PM(Capt)', 'PM(FO)', 'All Crew'],
+  detected_by: ['Capt', 'FO', 'PF(Capt)', 'PF(FO)', 'PM(Capt)', 'PM(FO)', 'All Crew', 'Safety Crew', 'Observer', 'ATC', 'Cabin Crew', 'Dispatch', 'Ground staff', 'Aircraft system', 'Nobody(or Auditor)', 'Others'],
+  fatigue: ['None', 'Low', 'Medium', 'High'],
+  attention: ['Normal scan', 'Channelized', 'Fixation'],
+  workload: ['None', 'Low', 'Medium', 'High'],
+  communication: ['Standard', 'Reduced', 'Ineffective'],
+  time_pressure: ['None', 'Low', 'Medium', 'High'],
+  briefing: ['Effective', 'Ineffective', 'None', 'N/A'],
+  monitoring: ['Effective', 'Ineffective', 'None'],
+  cross_check: ['Effective', 'Ineffective', 'None'],
+  challenge: ['Effective', 'Ineffective', 'None'],
+  intervention: ['Too Early', 'Timely', 'Late', 'None'],
+  root_cause: ['Slip', 'Lapse', 'Mistake', 'Intentional deviation', 'Training gap', 'SOP design issue', 'CRM breakdown', 'Environmental factor', 'Organizational factor']
+};
+// JSON records 의 필드 순서 (기존 PE 체크리스트와 동일)
+const INFO_KEYS = ['audit_no', 'date', 'route', 'tko_land'];
+const REC_KEYS = ['audit_no', 'date', 'route', 'tko_land', 'phase', 'auditor', 'error_number', 'error_code', 'error_type', 'detection_time', 'committed_by', 'detected_by', 'fatigue', 'attention', 'workload', 'communication', 'time_pressure', 'briefing', 'monitoring', 'cross_check', 'challenge', 'intervention', 'root_cause', 'remarks'];
+const LABEL = { phase:'Phase', error_number:'Error Number', error_code:'Error Code', error_type:'Error Type', detection_time:'Detection Time', committed_by:'Committed By', detected_by:'Detected By', fatigue:'Fatigue', attention:'Attention', workload:'Workload', communication:'Communication', time_pressure:'Time Pressure', briefing:'Briefing', monitoring:'Monitoring', cross_check:'Cross-check', challenge:'Challenge', intervention:'Intervention', root_cause:'Root Cause', remarks:'Remarks' };
+
+/* ════════════════════════════════════════════════════════════════
+ *  상태 & 저장 (체크리스트 여러 장 보관)
+ * ════════════════════════════════════════════════════════════════ */
+const today = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+const blankInfo = () => ({ audit_no: '', date: today(), route: '', tko_land: '', auditor: '' });
+const blankRec = () => ({ phase: '', error_number: '', error_code: '', error_type: '', detection_time: '', committed_by: '', detected_by: '', fatigue: '', fatigueMode: 'auto', attention: '', workload: '', communication: '', time_pressure: '', briefing: '', monitoring: '', cross_check: '', challenge: '', intervention: '', root_cause: '', remarks: '' });
+const blankTod = () => ({ sptod: null, opp: null, rest: null });
+const blankMember = role => Object.assign({ role, duty: null, sp: null, s24: null, tz: null, clock: null, jls: null }, blankTod());
+const blankFat = () => ({ crew: null, members: [blankMember('CAPT'), blankMember('FO')] });
+const blankState = () => ({ info: blankInfo(), fat: blankFat(), recs: [blankRec()], savedAt: null, sentAt: null });
+function normalize(d) {
+  const s = blankState();
+  s.info = Object.assign(blankInfo(), d.info || {});
+  const f = d.fat || {};
+  s.fat = { crew: f.crew || null, members: [] };
+  s.fat.members = (f.members && f.members.length ? f.members : blankFat().members).map(m => { const b = blankMember(m.role || 'CAPT'); const o = {}; Object.keys(b).forEach(k => o[k] = (k in m) ? m[k] : b[k]); return o; });
+  s.recs = (d.recs || []).map(r => Object.assign(blankRec(), r));
+  s.savedAt = d.savedAt || null; s.sentAt = d.sentAt || null;
+  return s;
+}
+
+const IDX_KEY = 'pe_ws_index_v1', SHEET_PREFIX = 'pe_ws_sheet_', OLD_DRAFT = 'ap_checklist_draft';
+let S = blankState(), IDX = { cur: null, ids: [] }, saveTimer = null;
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+function saveIdx() { try { localStorage.setItem(IDX_KEY, JSON.stringify(IDX)); } catch (e) { console.warn(e); } }
+function readSheet(id) { try { const r = localStorage.getItem(SHEET_PREFIX + id); return r ? normalize(JSON.parse(r)) : null; } catch (e) { return null; } }
+// 예전 PE 체크리스트(가로형)의 임시 저장본을 첫 체크리스트로 옮김 — 입력칸 순서대로 저장돼 있음 (한 장에 24칸)
+function migrateOldDraft(raw) {
+  const vals = JSON.parse(raw), n = Object.keys(vals).length; if (!n) return null;
+  const st = blankState(); st.recs = [];
+  for (let p = 0; p * 24 < n; p++) {
+    const v = REC_KEYS.map((k, i) => vals[p * 24 + i] || '');
+    const o = {}; REC_KEYS.forEach((k, i) => o[k] = v[i]);
+    if (p === 0) { st.info.audit_no = o.audit_no; st.info.date = o.date || st.info.date; st.info.route = o.route; st.info.tko_land = o.tko_land; st.info.auditor = o.auditor; }
+    const r = blankRec(); REC_KEYS.slice(4).forEach(k => { if (k in r) r[k] = o[k]; });
+    if (k_has(r)) { r.fatigueMode = r.fatigue ? 'manual' : 'auto'; st.recs.push(r); }
+  }
+  if (!st.recs.length) st.recs.push(blankRec());
+  return st;
+}
+const k_has = r => ['phase', 'error_number', 'error_code', 'error_type', 'detection_time', 'committed_by', 'detected_by', 'fatigue', 'attention', 'workload', 'communication', 'time_pressure', 'briefing', 'monitoring', 'cross_check', 'challenge', 'intervention', 'root_cause', 'remarks'].some(k => String(r[k] || '').trim());
+function load() {
+  let how = 'restored';
+  try {
+    const ix = JSON.parse(localStorage.getItem(IDX_KEY) || 'null');
+    if (ix && Array.isArray(ix.ids)) IDX = { cur: ix.cur, ids: ix.ids.filter(id => localStorage.getItem(SHEET_PREFIX + id)) };
+    if (!IDX.ids.length) {
+      const old = localStorage.getItem(OLD_DRAFT); let st = null;
+      if (old) { try { st = migrateOldDraft(old); } catch (e) { st = null; } }
+      S = st || blankState(); how = st ? 'migrated' : 'new';
+      IDX = { cur: newId(), ids: [] }; IDX.ids.push(IDX.cur); persist(); saveIdx();
+      return how;
+    }
+    if (!IDX.ids.includes(IDX.cur)) IDX.cur = IDX.ids[IDX.ids.length - 1];
+    S = readSheet(IDX.cur) || blankState();
+  } catch (e) { console.warn(e); S = blankState(); IDX = { cur: newId(), ids: [] }; IDX.ids.push(IDX.cur); saveIdx(); return 'new'; }
+  return how;
+}
+function persist() {
+  try { S.savedAt = new Date().toISOString(); localStorage.setItem(SHEET_PREFIX + IDX.cur, JSON.stringify(S)); showSaved(); }
+  catch (e) { console.warn(e); $('#saveState').innerHTML = '<span style="color:#fca5a5">저장 실패</span>'; }
+}
+function scheduleSave() { clearTimeout(saveTimer); $('#saveState').textContent = '저장 중…'; saveTimer = setTimeout(persist, 300); }
+function flushSave() { if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; persist(); } }
+function showSaved() {
+  if (!S.savedAt) { $('#saveState').innerHTML = '&nbsp;'; return; }
+  const d = new Date(S.savedAt);
+  $('#saveState').innerHTML = '<b>●</b> 자동저장 ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSave(); });
+window.addEventListener('pagehide', flushSave);
+
+/* ── 유틸 ── */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const optsB = (list, val) => '<option value="">— Select —</option>' + list.map(v => `<option value="${esc(v)}"${v === val ? ' selected' : ''}>${esc(v)}</option>`).join('');
+const optsG = (groups, val) => '<option value="">— Select —</option>' + groups.map(([g, l]) => `<optgroup label="${esc(g)}">${l.map(v => `<option value="${esc(v)}"${v === val ? ' selected' : ''}>${esc(v)}</option>`).join('')}</optgroup>`).join('');
+function getPath(path) { return path.split('.').reduce((o, k) => (o == null ? o : o[k]), S); }
+function setPath(path, val) { const ks = path.split('.'); let o = S; for (let i = 0; i < ks.length - 1; i++) o = o[ks[i]]; o[ks[ks.length - 1]] = val; }
+function autoGrow(el) { el.style.height = 'auto'; el.style.height = Math.max(el.scrollHeight + 2, 110) + 'px'; }
+function toast(msg, btnLabel, onBtn, ms) {
+  const t = $('#toast'); $('#toastMsg').textContent = msg; const b = $('#toastBtn');
+  if (btnLabel) { b.hidden = false; b.textContent = btnLabel; b.onclick = () => { t.classList.remove('on'); onBtn && onBtn(); }; } else b.hidden = true;
+  t.classList.add('on'); clearTimeout(t._h); if (ms !== 0) t._h = setTimeout(() => t.classList.remove('on'), ms || 3500);
+}
+const pad = x => String(x).padStart(2, '0');
+const fmtK = ms => { const d = new Date(ms); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+const hmK = h => { const m = Math.round(h * 60); return Math.floor(m / 60) + '시간 ' + (m % 60) + '분'; };
+
+/* ════════════════════════════════════════════════════════════════
+ *  피로 판정 — 운항승무원 피로 점검표(fatigue-pe-v2)와 같은 규칙
+ * ════════════════════════════════════════════════════════════════ */
+const FG = ['None', 'Low', 'Medium', 'High'];
+const SP = [
+  ['완전히 깨어 있고 정신이 맑다', 'Fully alert, wide awake'],
+  ['매우 생기 있고 반응이 빠르지만 최상은 아니다', 'Very lively, responsive, but not at peak'],
+  ['괜찮다, 어느 정도 상쾌하다', 'Okay, somewhat fresh'],
+  ['약간 피곤하다, 상쾌하지 않다', 'A little tired, less than fresh'],
+  ['꽤 피곤하다, 처진다', 'Moderately tired, let down'],
+  ['극도로 피곤하다, 집중하기 매우 어렵다', 'Extremely tired, very difficult to concentrate'],
+  ['완전히 지쳤다, 제대로 기능하기 어렵다', 'Completely exhausted, unable to function effectively']];
+const RESTLOW = { 0: 0, 0.5: 0, 1: 1, 2: 2, 3: 3, 4: 4 }, S24REP = { 4: 3, 5.5: 5, 6.5: 6, 7.5: 7 }, S48REP = { 11: 10, 13: 12, 15: 14 };
+const ROLE_LABEL = { 'CAPT': '기장', 'FO': '부기장', 'CAPT-1': '기장 1', 'CAPT-2': '기장 2', 'FO-1': '부기장 1', 'FO-2': '부기장 2' };
+const DUTY_LABEL = { both: '이착륙 담당', enroute: 'ENROUTE 담당' };
+function fgrade(R, sp, A) {
+  const why = []; let g = 0;
+  if (R.length >= 2) { g = 3; why.push('위험 신호 2개 이상'); }
+  else if (R.length === 1 && A.length >= 2) { g = 3; why.push('위험 신호 1개 + 보조 요인 2개 이상'); }
+  if (sp !== null && sp >= 6) { g = 3; why.push('SP ' + sp); }
+  if (g < 3) {
+    if (R.length === 1) { g = Math.max(g, 2); why.push('위험 신호 1개'); }
+    if (sp === 5) { g = Math.max(g, 2); why.push('SP 5'); }
+    if (A.length >= 2) { g = Math.max(g, 2); why.push('보조 요인 2개'); }
+    if (g < 2) { if (sp === 4) { g = 1; why.push('SP 4'); } if (A.length === 1) { g = 1; why.push('보조 요인 1개'); } }
+  }
+  return { g, why };
+}
+const ftrace = (R, sp, A, why) => ['위험 신호 ' + R.length + '개' + (R.length ? ' (' + R.join(', ') + ')' : ''), 'SP ' + (sp ?? '미응답'), '보조 요인 ' + A.length + '개' + (A.length ? ' (' + A.join(', ') + ')' : ''), '→ ' + (why.length ? why.join(', ') : '해당 없음')];
+const isAug = () => S.fat.crew === '3' || S.fat.crew === '4';
+const S24T = { 4: '5시간 미만', 5.5: '5~6시간', 6.5: '6~7시간', 7.5: '7시간 이상' }, S48T = { 11: '12시간 미만', 13: '12~14시간', 15: '14시간 이상' };
+const OPPT = { 1: '2시간 미만', 2: '2~3시간', 3: '3~4시간', 4: '4~5시간', 5: '5~6시간', 6: '6시간 이상' }, RESTT = { 0: '못 잤음', 0.5: '1시간 미만', 1: '1~2시간', 2: '2~3시간', 3: '3~4시간', 4: '4시간 이상' };
+const CLOCKT = { home: '한국 시간', local: '현지 시간', adj: '적응 중' };
+// 시차 보조 요인 (근무 전·TOD 공통)
+// 3번은 인천 출발 편에만 적용 (해외 출발 편은 레이오버로 항상 '예'가 되어 의미가 없으므로 제외). Route를 아직 안 골랐으면 질문을 보여 줌
+const icnDep = () => !S.info.route || /^ICN-/.test(S.info.route);
+function jetAux(m) {
+  const A = [];
+  if (icnDep() && m.tz === '1') A.push('인천 출발 전 72시간 내 시차 4시간 이상 지역에서 복귀');
+  if (m.clock === 'adj') A.push('신체시계 적응 중');
+  if (m.jls === '1') A.push('시차로 수면 방해');
+  return A;
+}
+function evalMember(m) {
+  const crew = S.fat.crew, aug = isAug(), duty = aug ? m.duty : 'both';
+  const s24 = m.s24 == null ? null : parseFloat(m.s24);
+  // 근무 전 (Part 1~2)
+  const R = [];
+  if (s24 != null && s24 < 5) R.push('R1 24시간 수면 5시간 미만');
+  const A = jetAux(m);
+  const sp = m.sp ? parseInt(m.sp, 10) : null;
+  const pre = fgrade(R, sp, A);
+  // TOD (Part 3) — 3·4 PILOT의 이착륙 담당만
+  const todShown = aug && duty === 'both', todNeeded = todShown;
+  const sptod = m.sptod ? parseInt(m.sptod, 10) : null;
+  const rest = m.rest == null ? null : parseFloat(m.rest);
+  const hasTod = todShown && sptod !== null;
+  let tod = null; const RT = [], AT = [];
+  if (hasTod) {
+    const add = rest !== null ? RESTLOW[rest] : 0;
+    const e24 = s24 === null ? null : S24REP[s24] + add;
+    if (e24 !== null && e24 < 5) RT.push('R1 24시간 수면 ' + (add ? '(근무 전 ' + S24REP[s24] + '+기내 ' + add + ') ' : '') + e24 + '시간 < 5');
+    const opp = m.opp == null ? null : parseFloat(m.opp);
+    if (rest !== null && opp !== null && RESTLOW[rest] < opp * 0.5) RT.push('R2 기내 수면 부족 (휴식 ' + OPPT[opp] + ' 중 ' + RESTT[rest] + ')');
+    jetAux(m).forEach(x => AT.push(x));
+    tod = fgrade(RT, sptod, AT);
+  }
+  // 적용
+  let depG = pre.g, arrG = null, depT = ['근무 전 등급'].concat(ftrace(R, sp, A, pre.why)), arrT = [];
+  if (!aug) { arrG = pre.g; arrT = ['근무 전 등급 적용 (2 PILOT, TOD 점검 없음)']; }
+  else if (duty === 'both') { if (hasTod) { arrG = tod.g; arrT = ['TOD 등급'].concat(ftrace(RT, sptod, AT, tod.why)); } else arrT = ['TOD 점검 미기록']; }
+  else if (duty === 'enroute') { depT[0] = '근무 전 등급 (ENROUTE 담당: CRZ 단계에만 적용)'; arrT = ['해당 없음 (ENROUTE 담당, 착륙 단계 조종석 근무 안 함)']; }
+  else arrT = ['담당 구간 미선택'];
+  const answered = sp !== null;            // Part 1에 답했으면 '작성됨'으로 봄
+  if (!answered) { depG = null; if (!hasTod) arrG = null; }
+  const yn01 = v => v == null ? null : v === '1';
+  const json = {
+    form: 'fatigue-pe-v4', flightDate: S.info.date || null, route: S.info.route || null, crew: crew ? parseInt(crew, 10) : null, role: m.role, duty,
+    pre: { samnPerelli: sp, sleep24hBand: s24 == null ? null : ({ 4: '<5', 5.5: '5-6', 6.5: '6-7', 7.5: '>=7' })[s24],
+      timeZoneTravel72h: icnDep() ? yn01(m.tz) : 'N/A (overseas departure)', bodyClock: m.clock, jetLagSleepDisruption: yn01(m.jls), riskSignals: R, auxFactors: A, grade: answered ? FG[pre.g] : null },
+    tod: hasTod ? { samnPerelli: sptod, restOpportunityBand: m.opp == null ? null : ({ 1: '<2', 2: '2-3', 3: '3-4', 4: '4-5', 5: '5-6', 6: '>=6' })[m.opp], inflightSleepBand: rest == null ? null : ({ 0: 'none', 0.5: '<1', 1: '1-2', 2: '2-3', 3: '3-4', 4: '>=4' })[rest], inflightSleepCountedH: rest !== null ? RESTLOW[rest] : 0,
+      riskSignals: RT, auxFactors: AT, grade: FG[tod.g] } : null,
+    peFatigue: { departurePhases: depG === null ? null : FG[depG], arrivalPhases: arrG === null ? null : FG[arrG] },
+    criteria: 'Dawson&McCulloch 2005 24h sleep threshold / Samn-Perelli / jet-lag aux factors / grade bands: company draft'
+  };
+  return { aug, duty, answered, sp, sptod, hasTod, todShown, todNeeded, pre, tod, R, A, RT, AT, depG, arrG, depT, arrT, json };
+}
+const missingPre = m => { const x = []; if (!m.sp) x.push('1번'); if (!m.s24) x.push('2번'); if (icnDep() && !m.tz) x.push('3번'); if (!m.clock) x.push('4번'); if (!m.jls) x.push('5번'); if (isAug() && !m.duty) x.push('담당 구간'); return x; };
+// 이착륙/ENROUTE 담당 자동 맞춤 — 3 PILOT: 기장 둘이 서로 반대, FO는 항상 이착륙 / 4 PILOT: 같은 SET은 같게, 다른 SET은 반대
+const oppDuty = v => v === 'both' ? 'enroute' : v === 'enroute' ? 'both' : null;
+function syncDuty(i) {
+  const M = S.fat.members, c = S.fat.crew, v = M[i].duty;
+  if (c === '3') { if (M[i].role === 'FO') { M[i].duty = 'both'; return; } M.forEach((m, k) => { if (m.role === 'FO') m.duty = 'both'; else if (k !== i) m.duty = oppDuty(v); }); }
+  if (c === '4') { const set = i < 2 ? 0 : 1; M.forEach((m, k) => { m.duty = (k < 2 ? 0 : 1) === set ? v : oppDuty(v); }); }
+}
+
+/* ── PE error의 Fatigue 자동 등급 : Committed by(누가) + Phase(언제) ── */
+const DEP_PH = ['PreDep / Taxi', 'TKO / CLB', 'CRZ'], ARR_PH = ['DES / APP / LDG', 'TAXI-IN'];
+const rankOf = role => /CAPT/.test(role) ? 'CAPT' : 'FO';
+function autoFatigue(r) {
+  if (!r.phase) return { g: null, why: 'Phase를 고르면 자동으로 들어갑니다' };
+  if (!r.committed_by) return { g: null, why: 'Committed By를 고르면 자동으로 들어갑니다' };
+  const who = r.committed_by === 'All Crew' ? null : (/Capt/.test(r.committed_by) ? 'CAPT' : 'FO');
+  const sets = r.phase === 'ALL' ? ['dep', 'arr'] : DEP_PH.includes(r.phase) ? ['dep'] : ['arr'];
+  let best = null; const used = [], missing = [];
+  S.fat.members.forEach(m => {
+    if (who && rankOf(m.role) !== who) return;
+    const e = evalMember(m);
+    sets.forEach(set => {
+      const g = set === 'dep' ? e.depG : e.arrG;
+      const relevant = (e.aug && e.duty === 'enroute') ? (set === 'dep' && (r.phase === 'CRZ' || r.phase === 'ALL')) : true;
+      if (!relevant) return;
+      if (g === null) { missing.push(m.role + (set === 'arr' ? (e.answered ? ' TOD 미기록' : ' 미작성') : ' 미작성')); return; }
+      used.push({ role: m.role, set, g, src: set === 'dep' ? '근무 전' : (e.hasTod ? 'TOD' : '근무 전') });
+      if (best === null || g > best) best = g;
+    });
+  });
+  if (best === null) return { g: null, why: missing.length ? '피로 점검 ' + missing.join(', ') + ' — 직접 선택하거나 Fatigue 탭을 작성하세요' : '해당 승무원의 피로 점검이 없습니다 — 직접 선택하세요' };
+  const parts = used.map(u => `${u.role} ${u.src} ${FG[u.g]}`);
+  return { g: best, why: parts.join(' · ') + (used.length > 1 ? ' → 높은 등급 적용' : '') };
+}
+function applyAutos() { S.recs.forEach(r => { if (r.fatigueMode !== 'manual') { const a = autoFatigue(r); r.fatigue = a.g === null ? '' : FG[a.g]; } }); }
+
+/* ════════════════════════════════════════════════════════════════
+ *  화면 그리기
+ * ════════════════════════════════════════════════════════════════ */
+function renderInfo() {
+  $('#route').innerHTML = optsG(ROUTES, S.info.route);
+  $('#tkoLand').innerHTML = optsB(OPT.tko_land, S.info.tko_land);
+  $('#auditor').innerHTML = optsB(OPT.auditor, S.info.auditor);
+  $('#date').value = S.info.date;
+}
+const chips = (path, list, cur, cls) => `<div class="chips${cls ? ' ' + cls : ''}" data-group="${path}">` + list.map(([v, lab, sm]) => `<button type="button" class="chip${String(cur) === String(v) ? ' on' : ''}" data-fset="${path}" data-v="${esc(v)}">${lab}${sm ? `<small>${sm}</small>` : ''}</button>`).join('') + '</div>';
+const yn = (path, cur, a, b) => `<div class="yn" data-group="${path}"><button type="button" class="${cur === a[0] ? 'on' : ''}" data-fset="${path}" data-v="${a[0]}">${a[1]}</button><button type="button" class="${cur === b[0] ? 'on' : ''}" data-fset="${path}" data-v="${b[0]}">${b[1]}</button></div>`;
+const spList = (path, cur) => `<div class="sp chips col" data-group="${path}">` + SP.map((s, i) => `<button type="button" class="chip${String(cur) === String(i + 1) ? ' on' : ''}" data-fset="${path}" data-v="${i + 1}"><span class="num">${i + 1}</span><span>${s[0]}<span class="en">${s[1]}</span></span></button>`).join('') + '</div>';
+let curMember = 0;
+function renderFat() {
+  $('#crewChips').innerHTML = chips('fat.crew', [['2', '2 PILOT', '1 SET'], ['3', '3 PILOT', '2 CAPT · 1 FO'], ['4', '4 PILOT', '2 SET']], S.fat.crew).replace('<div class="chips"', '<div class="chips" style="margin:0;display:grid;grid-template-columns:repeat(3,1fr)"');
+  if (curMember >= S.fat.members.length) curMember = 0;
+  const tabs = S.fat.members.map((m, i) => `<button type="button" class="mtab${i === curMember ? ' on' : ''}" data-member="${i}">${m.role}<small data-mstat="${i}"></small></button>`).join('');
+  $('#fatBody').innerHTML = `<div class="mtabs">${tabs}</div><div id="memberBody"></div>`;
+  renderMember();
+  updateFatStatus();
+}
+function renderMember() {
+  const i = curMember, m = S.fat.members[i], p = `fat.members.${i}.`, aug = isAug();
+  const roleSel = '';
+  const fixedFo = S.fat.crew === '3' && m.role === 'FO';
+  const duty = !aug ? '' : fixedFo ? `<div class="q"><div class="qt">이번 비행 담당</div><div class="qh" style="margin:0"><b>이착륙 담당 (고정)</b> — 3 PILOT의 FO는 두 구간 모두 이착륙 때 우측석을 맡습니다.</div></div>`
+    : `<div class="q"><div class="qt">이번 비행 담당</div><div class="qh">한 명을 고르면 나머지 승무원은 자동으로 정해집니다. ${S.fat.crew === '3' ? '다른 기장은 반대 담당이 됩니다.' : '같은 SET은 같은 담당, 다른 SET은 반대 담당이 됩니다.'}</div>${chips(p + 'duty', [['both', '이착륙 담당', '이륙·착륙 때 조종석 근무 (TOD 점검 대상)'], ['enroute', 'ENROUTE 담당', '순항 중 교대 근무만']], m.duty, 'col')}</div>`;
+  $('#memberBody').innerHTML = `
+  <div class="card"><h3>${m.role} · ${ROLE_LABEL[m.role] || ''} <span style="font-weight:700;color:var(--muted);font-size:12.5px">승무원 작성 (Part 1~2)</span></h3>${roleSel}${duty}
+    <div class="q"><div class="qt">Part 1. 현재 피로 수준 <span style="font-weight:700;color:var(--muted);font-size:12.5px">Samn-Perelli</span></div>
+      <div class="qh"><span class="qn">1.</span>지금 상태에 가장 가까운 번호를 고르세요.</div>${spList(p + 'sp', m.sp)}</div>
+  </div>
+  <div class="card"><h3>Part 2. 수면과 시차 적응 <small style="font-weight:700;color:var(--muted)">Prior Sleep · Jet Lag</small></h3>
+    <div class="qh" style="margin:0 0 12px">잠든 시간만 셉니다. 누워 있던 시간은 빼고, 낮잠과 기내 휴식 중 잔 시간은 포함합니다. 대략적인 시간으로 고르면 됩니다.</div>
+    <div class="q"><div class="qt"><span class="qn">2.</span>최근 24시간 동안 잔 시간은?</div>${chips(p + 's24', [['4', '5시간 미만'], ['5.5', '5~6시간'], ['6.5', '6~7시간'], ['7.5', '7시간 이상']], m.s24)}</div>
+    ${icnDep() ? `<div class="q"><div class="qt"><span class="qn">3.</span>인천 출발 전 72시간 안에 한국과 시차가 4시간 이상 나는 지역(미주 등)에서 돌아왔습니까?</div><div class="qh">이번 출두 시점 기준. 승무·편승 모두 포함. 일본·중국·동남아는 해당하지 않습니다.</div>${chips(p + 'tz', [['1', '예'], ['0', '아니오']], m.tz)}</div>` : `<div class="q"><div class="qt"><span class="qn">3.</span><span style="color:var(--muted)">해외 출발 편 — 이 질문은 해당 없음</span></div><div class="qh" style="margin:0">레이오버 후 출발하는 편은 이 질문을 묻지 않고 판정에서도 제외합니다. 시차 영향은 4·5번으로 확인합니다.</div></div>`}
+    <div class="q"><div class="qt"><span class="qn">4.</span>지금 몸이 어느 시간에 맞춰져 있다고 느낍니까?</div>${chips(p + 'clock', [['home', '한국 시간'], ['local', '현지 시간'], ['adj', '적응 중', '어느 쪽도 아님 · 잘 모르겠음']], m.clock)}</div>
+    <div class="q"><div class="qt"><span class="qn">5.</span>시차 때문에 최근 잠을 설치거나, 자야 할 때 잠들지 못했습니까?</div>${chips(p + 'jls', [['1', '예'], ['0', '아니오']], m.jls)}</div>
+    <div class="warnbox" data-miss style="margin:12px 0 0" hidden></div>
+  </div>
+  <div class="card aud" data-todcard><h3>Part 3. TOD 점검<small>심사원이 질문 · 승무원 작성 불필요</small></h3>
+    <div class="qh" data-todnote style="margin:0 0 12px"></div>
+    <div data-todbody>
+      <div class="q"><div class="qt"><span class="qn">6.</span>지금 상태에 가장 가까운 번호는? <span style="color:var(--muted);font-weight:700">(Samn-Perelli)</span></div>${spList(p + 'sptod', m.sptod)}</div>
+      <div>
+        <div class="q"><div class="qt"><span class="qn">7.</span>배정된 기내 휴식 시간은?</div><div class="qh">Crew rest 계획상 본인에게 주어진 휴식 시간</div>${chips(p + 'opp', [['1', '2시간 미만'], ['2', '2~3시간'], ['3', '3~4시간'], ['4', '4~5시간'], ['5', '5~6시간'], ['6', '6시간 이상']], m.opp)}</div>
+        <div class="q"><div class="qt"><span class="qn">8.</span>그중 실제로 잔 시간은?</div>${chips(p + 'rest', [['0', '못 잤음'], ['0.5', '1시간 미만'], ['1', '1~2시간'], ['2', '2~3시간'], ['3', '3~4시간'], ['4', '4시간 이상']], m.rest)}</div>
+      </div>
+      <div class="qh" data-todgrade style="margin:6px 0 0"></div>
+    </div>
+  </div>
+  <div class="card aud"><h3>PE Fatigue 적용 결과 <small>${m.role}</small></h3>
+    <table class="res"><thead><tr><th style="width:34%">PE error 발생 단계</th><th style="width:16%">등급</th><th>근거</th></tr></thead>
+    <tbody><tr><td>Preflight · Taxi-out · Takeoff · Climb · Cruise<br><span class="tr">Phase: PreDep/Taxi · TKO/CLB · CRZ</span></td><td data-rdep></td><td class="tr" data-tdep></td></tr>
+    <tr><td>Descent · Approach · Landing · Taxi-in<br><span class="tr">Phase: DES/APP/LDG · TAXI-IN</span></td><td data-rarr></td><td class="tr" data-tarr></td></tr></tbody></table>
+    <div class="qh" data-rnote style="margin:8px 0 0"></div>
+  </div>`;
+  updateMember();
+}
+const gBadge = g => g === null ? '<span class="g grx">-</span>' : `<span class="g gr${g}">${FG[g]}</span>`;
+function updateMember() {
+  const i = curMember, m = S.fat.members[i], e = evalMember(m), B = $('#memberBody'); if (!B) return;
+  const miss = missingPre(m), mb = $('[data-miss]', B); mb.hidden = !miss.length || m.sp == null; mb.textContent = miss.length ? '아직 답하지 않은 질문: ' + miss.join(', ') : '';
+  const aug = e.aug;
+  $('[data-todnote]', B).textContent = !S.fat.crew ? '편성을 먼저 선택하세요.' : !aug ? '2 PILOT은 교대 없이 이착륙을 모두 담당하므로 TOD 점검을 하지 않습니다. 근무 전 등급이 착륙 단계까지 적용됩니다.' : e.todNeeded ? '이착륙 담당 승무원입니다. TOD 직전에 아래 항목을 질문해 기록하세요.' : m.duty === 'enroute' ? 'ENROUTE 담당 승무원은 TOD 점검이 필요 없습니다.' : '담당을 먼저 선택하세요.';
+  $('[data-todbody]', B).hidden = !e.todShown;
+  $('[data-todgrade]', B).innerHTML = e.hasTod ? 'TOD 등급 (자동) ' + gBadge(e.tod.g) : (e.todShown ? '6번에 답하면 TOD 등급이 자동으로 정해집니다.' : '');
+  $('[data-rdep]', B).innerHTML = gBadge(e.depG); $('[data-rarr]', B).innerHTML = gBadge(e.arrG);
+  $('[data-tdep]', B).innerHTML = e.answered ? e.depT.map(esc).join('<br>') : 'Part 1 미작성';
+  $('[data-tarr]', B).innerHTML = (e.answered || e.hasTod) ? (e.arrT.length ? e.arrT.map(esc).join('<br>') : '-') : 'Part 1 미작성';
+  $('[data-rnote]', B).textContent = (aug && !m.duty) ? '3·4 PILOT은 이착륙/ENROUTE 담당을 선택해야 적용 등급이 정해집니다.' : '';
+  updateFatStatus();
+}
+function updateFatStatus() {
+  let done = 0;
+  S.fat.members.forEach((m, i) => {
+    const e = evalMember(m); if (e.answered) done++;
+    const el = $(`[data-mstat="${i}"]`); if (el) el.textContent = e.answered ? `${e.depG === null ? '-' : FG[e.depG]} / ${e.arrG === null ? '-' : FG[e.arrG]}` : '미작성';
+  });
+  $('#cntFat').textContent = done;
+}
+function syncMembersToCrew() {
+  const c = S.fat.crew, cur = S.fat.members.slice(), used = new Set();
+  const roles = c === '3' ? ['CAPT-1', 'CAPT-2', 'FO'] : c === '4' ? ['CAPT-1', 'FO-1', 'CAPT-2', 'FO-2'] : ['CAPT', 'FO'];
+  const take = r => { const base = r.replace(/-\d$/, ''); const m = cur.find(x => !used.has(x) && x.role === r) || cur.find(x => !used.has(x) && x.role.replace(/-\d$/, '') === base); if (m) used.add(m); return m; };
+  S.fat.members = roles.map(r => { const m = take(r) || blankMember(r); m.role = r; if (c === '2' || !c) m.duty = null; return m; });
+  if (c === '3') { S.fat.members[2].duty = 'both'; const d = S.fat.members[0].duty || (S.fat.members[1].duty ? oppDuty(S.fat.members[1].duty) : null); if (d) { S.fat.members[0].duty = d; syncDuty(0); } }
+  if (c === '4') { const k = S.fat.members.findIndex(m => m.duty); if (k >= 0) syncDuty(k); }
+}
+
+/* ── Errors ── */
+const ERR_TYPE_OF = code => { const m = String(code || '').match(/^(\d+)/); if (!m) return ''; const t = (GUIDE_TYPES[m[1]] || '').toLowerCase(); return OPT.error_type.find(o => o.toLowerCase() === t) || ''; };
+function recSummary(r) { return [r.phase, r.error_code].filter(Boolean).join(' · ') || '새 Error'; }
+function sel(i, k, list, groups) { const r = S.recs[i]; return `<div class="f"><label>${LABEL[k]}</label><select class="in" data-bind="recs.${i}.${k}">${groups ? optsG(groups, r[k]) : optsB(list, r[k])}</select></div>`; }
+function fatigueField(i) {
+  const r = S.recs[i], auto = r.fatigueMode !== 'manual', a = autoFatigue(r);
+  return `<div class="f"><div class="lbl-row"><label>Fatigue</label><span class="mode" data-mode="${i}"><button type="button" class="${auto ? 'on' : ''}" data-act="fmode" data-i="${i}" data-v="auto">자동</button><button type="button" class="${auto ? '' : 'on'}" data-act="fmode" data-i="${i}" data-v="manual">직접</button></span></div>
+    <select class="in" data-bind="recs.${i}.fatigue" ${auto ? 'disabled' : ''}>${optsB(OPT.fatigue, auto ? (a.g === null ? '' : FG[a.g]) : r.fatigue)}</select>
+    <div class="fat-auto" data-fauto="${i}">${auto ? (a.g === null ? esc(a.why) : '<b>자동</b> · ' + esc(a.why)) : '직접 선택한 값이 들어갑니다.' + (a.g !== null ? ' (피로 점검 기준: ' + FG[a.g] + ')' : '')}</div></div>`;
+}
+function renderErrors() {
+  applyAutos();
+  $('#errList').innerHTML = S.recs.length ? S.recs.map((r, i) => `
+  <div class="item"><div class="item-head"><span class="badge e">PE${i + 1}</span><span class="item-sum" data-sum="${i}">${esc(recSummary(r))}</span>
+    <button type="button" class="icon-btn" data-act="del" data-i="${i}" aria-label="삭제">✕</button></div>
+  <div class="item-body">
+    <h3 style="margin:2px 0 10px;font-size:14px;color:var(--navy)">ERROR IDENTIFICATION</h3>
+    <div class="grid g2">${sel(i, 'phase', OPT.phase)}${sel(i, 'error_number', OPT.error_number)}</div>
+    <div class="grid" style="margin-top:12px">${sel(i, 'error_code', null, CODE_GROUPS)}<div class="hint" data-thint="${i}" style="margin-top:-6px"></div></div>
+    <div class="grid g2" style="margin-top:4px">${sel(i, 'error_type', OPT.error_type)}${sel(i, 'detection_time', OPT.detection_time)}${sel(i, 'committed_by', OPT.committed_by)}${sel(i, 'detected_by', OPT.detected_by)}</div>
+    <h3 style="margin:18px 0 10px;font-size:14px;color:var(--navy)">CREW STATE</h3>
+    <div class="grid g2"><div data-fatwrap="${i}">${fatigueField(i)}</div>${sel(i, 'attention', OPT.attention)}${sel(i, 'workload', OPT.workload)}${sel(i, 'communication', OPT.communication)}${sel(i, 'time_pressure', OPT.time_pressure)}</div>
+    <h3 style="margin:18px 0 10px;font-size:14px;color:var(--navy)">CRM COUNTERMEASURES</h3>
+    <div class="grid g2">${sel(i, 'briefing', OPT.briefing)}${sel(i, 'monitoring', OPT.monitoring)}${sel(i, 'cross_check', OPT.cross_check)}${sel(i, 'challenge', OPT.challenge)}${sel(i, 'intervention', OPT.intervention)}</div>
+    <h3 style="margin:18px 0 10px;font-size:14px;color:var(--navy)">ROOT CAUSE CLASSIFICATION</h3>
+    <div class="grid g2">${sel(i, 'root_cause', OPT.root_cause)}</div>
+    <h3 style="margin:18px 0 10px;font-size:14px;color:var(--navy)">REMARKS</h3>
+    <textarea class="in" data-bind="recs.${i}.remarks" placeholder="Enter remarks here...">${esc(r.remarks)}</textarea>
+  </div></div>`).join('') : '<div class="empty">기록된 Error가 없습니다.</div>';
+  S.recs.forEach((r, i) => typeHint(i));
+  $$('#errList textarea').forEach(autoGrow);
+  updateCounts();
+}
+function typeHint(i) { const el = $(`[data-thint="${i}"]`); if (!el) return; const t = ERR_TYPE_OF(S.recs[i].error_code); el.textContent = t ? 'Guidance 유형: ' + t : ''; }
+function refreshFatigueFields() { applyAutos(); S.recs.forEach((r, i) => { const w = $(`[data-fatwrap="${i}"]`); if (w) w.innerHTML = fatigueField(i); }); }
+function updateCounts() { $('#cntErr').textContent = S.recs.filter(k_has).length; }
+function renderAll() { renderInfo(); renderFat(); renderErrors(); showSaved(); }
+
+/* ── Guidance ── */
+function renderGuide() {
+  let html = '<table class="ref-table"><thead><tr><th>Category</th><th>Code</th><th>Error Description</th><th>Error Type</th></tr></thead><tbody>';
+  let last = null;
+  GUIDE_ROWS.forEach(([cat, code, desc, typ]) => {
+    html += `<tr><td class="ref-cat">${cat !== last ? esc(cat) : ''}</td><td style="text-align:center;font-weight:900;color:var(--navy)">${esc(code)}</td><td>${desc}</td><td style="text-align:center;font-weight:800">${esc(typ)}</td></tr>`;
+    last = cat;
+  });
+  $('#guideCode').innerHTML = '<div class="tw" style="margin-top:0">' + html + '</tbody></table></div>';
+  $$('#guideRc .ref-table').forEach(t => { if (!t.parentElement.classList.contains('tw')) { const w = document.createElement('div'); w.className = 'tw'; t.parentNode.insertBefore(w, t); w.appendChild(t); } });
+  $$('#guideRc [style*="border-left"]').forEach(h => { h.removeAttribute('style'); h.outerHTML = `<h4>${h.innerHTML}</h4>`; });
+}
+
+/* ════════════════════════════════════════════════════════════════
+ *  입력 처리
+ * ════════════════════════════════════════════════════════════════ */
+document.addEventListener('input', e => {
+  const el = e.target, path = el.dataset && el.dataset.bind; if (!path) return;
+  let v = el.value;
+  setPath(path, v);
+  if (el.tagName === 'TEXTAREA') autoGrow(el);
+  onChange(path); scheduleSave();
+});
+document.addEventListener('change', e => {
+  const el = e.target, path = el.dataset && el.dataset.bind; if (!path) return;
+  setPath(path, el.value); onChange(path); scheduleSave();
+});
+function onChange(path) {
+  if (path.startsWith('fat.')) { updateMember(); refreshFatigueFields(); return; }
+  if (path === 'info.date') return;
+  if (path === 'info.route') { renderMember(); refreshFatigueFields(); return; }
+  const m = path.match(/^recs\.(\d+)\.(\w+)/); if (!m) return;
+  const i = +m[1], k = m[2], r = S.recs[i];
+  if (k === 'error_code') { if (!r.error_type) { const t = ERR_TYPE_OF(r.error_code); if (t) { r.error_type = t; const s = $(`[data-bind="recs.${i}.error_type"]`); if (s) s.value = t; } } typeHint(i); }
+  if (k === 'phase' || k === 'committed_by') { applyAutos(); const w = $(`[data-fatwrap="${i}"]`); if (w) w.innerHTML = fatigueField(i); }
+  if (k === 'phase' || k === 'error_code') { const s = $(`[data-sum="${i}"]`); if (s) s.textContent = recSummary(r); }
+  updateCounts();
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest('button, .dim'); if (!t) return;
+  if (t.classList.contains('dim') && e.target === t) { ({ resetDim: closeReset, askDim: closeAsk, listDim: closeList, guideDim: closeGuide })[t.id](); return; }
+  if (t.dataset.tab) return showTab(t.dataset.tab);
+  if (t.dataset.member !== undefined) { curMember = +t.dataset.member; $$('.mtab').forEach(b => b.classList.toggle('on', +b.dataset.member === curMember)); renderMember(); return; }
+  if (t.dataset.g) { $$('.gtab').forEach(b => b.classList.toggle('on', b === t)); $('#guideCode').hidden = t.dataset.g !== 'code'; $('#guideRc').hidden = t.dataset.g !== 'rc'; return; }
+  if (t.dataset.fset) {
+    const path = t.dataset.fset, v = t.dataset.v, cur = getPath(path);
+    const nv = String(cur) === v && path !== 'fat.crew' && !/(role|duty)$/.test(path) ? null : v;     // 다시 누르면 선택 해제
+    setPath(path, nv);
+    const grp = t.closest('[data-group]'); if (grp) $$('[data-fset]', grp).forEach(b => b.classList.toggle('on', nv !== null && b.dataset.v === String(nv)));
+    if (path === 'fat.crew') { syncMembersToCrew(); renderFat(); }
+    else if (/\.duty$/.test(path)) { syncDuty(+path.split('.')[2]); renderFat(); }
+    else updateMember();
+    refreshFatigueFields(); scheduleSave(); return;
+  }
+  if (t.dataset.reset) return askReset(t.dataset.reset);
+  switch (t.dataset.act || t.id) {
+    case 'add-err': S.recs.push(blankRec()); renderErrors(); scheduleSave(); { const it = $$('#errList > .item'); it[it.length - 1].scrollIntoView({ behavior: 'smooth', block: 'start' }); } break;
+    case 'del': delRec(+t.dataset.i); break;
+    case 'fmode': { const i = +t.dataset.i, r = S.recs[i]; r.fatigueMode = t.dataset.v; if (r.fatigueMode === 'manual' && !r.fatigue) { const a = autoFatigue(r); r.fatigue = a.g === null ? '' : FG[a.g]; } applyAutos(); $(`[data-fatwrap="${i}"]`).innerHTML = fatigueField(i); scheduleSave(); break; }
+    case 'btnGuide': $('#guideDim').classList.add('on'); break;
+    case 'guide-close': closeGuide(); break;
+    case 'btnReset': openReset(); break;
+    case 'reset-close': closeReset(); break;
+    case 'reset-back': $('#resetStep2').hidden = true; $('#resetStep1').hidden = false; break;
+    case 'reset-do': doReset(); break;
+    case 'ask-ok': { const cb = askCb; closeAsk(); if (cb) cb(); break; }
+    case 'ask-cancel': closeAsk(); break;
+    case 'btnList': openList(); break;
+    case 'list-close': closeList(); break;
+    case 'sheet-new': newSheet(false); break;
+    case 'sheet-return': newSheet(true); break;
+    case 'sheet-open': openSheet(t.dataset.id); break;
+    case 'sheet-del': delSheet(t.dataset.id); break;
+    case 'btnSend': sendAll(); break;
+  }
+});
+function closeGuide() { $('#guideDim').classList.remove('on'); }
+let askCb = null;
+function askConfirm(o, cb) {
+  $('#askTitle').textContent = o.title || '확인'; $('#askMsg').textContent = o.msg || '';
+  const ok = $('#askOk'); ok.textContent = o.ok || '확인'; ok.classList.toggle('danger', !!o.danger); ok.classList.toggle('go', !o.danger);
+  askCb = cb; $('#askDim').classList.add('on');
+}
+function closeAsk() { $('#askDim').classList.remove('on'); askCb = null; }
+function delRec(i) {
+  askConfirm({ title: `PE${i + 1} 삭제`, msg: '이 Error에 입력한 내용이 지워집니다.', ok: '삭제', danger: true }, () => {
+    S.recs.splice(i, 1); renderErrors(); scheduleSave(); toast(`PE${i + 1} 을(를) 삭제했습니다.`);
+  });
+}
+function showTab(n) {
+  $$('.tab').forEach(b => b.classList.toggle('on', b.dataset.tab === n));
+  $$('.panel').forEach(p => p.classList.toggle('on', p.id === 'panel' + n));
+  try { sessionStorage.setItem('pe_tab', n); } catch (e) {}
+  if (n === '3') refreshFatigueFields();
+  window.scrollTo(0, 0);
+  requestAnimationFrame(() => $$('#panel' + n + ' textarea').forEach(autoGrow));
+}
+
+/* ── 목록 (여러 장 보관) ── */
+const hm = iso => { if (!iso) return ''; const d = new Date(iso); return `${d.getMonth() + 1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const sheetTitle = st => [st.info.date, st.info.route || '(구간 없음)'].filter(Boolean).join(' · ');
+function updateSheetCount() { $('#cntSheets').textContent = IDX.ids.length; }
+function renderList() {
+  $('#sheetList').innerHTML = IDX.ids.slice().reverse().map(id => {
+    const st = id === IDX.cur ? S : readSheet(id); if (!st) return '';
+    const cur = id === IDX.cur;
+    const tag = st.sentAt ? `<span class="tag sent">보냄 ${hm(st.sentAt)}</span>` : '<span class="tag unsent">안 보냄</span>';
+    return `<div class="srow${cur ? ' cur' : ''}"><button type="button" class="open" data-act="sheet-open" data-id="${id}">
+      <div class="t">${esc(sheetTitle(st))}${cur ? '<span class="tag now">작성 중</span>' : ''}${tag}</div>
+      <div class="m">${esc(st.info.date || '')} · 마지막 저장 ${esc(hm(st.savedAt) || '-')} · Error ${st.recs.filter(k_has).length}건</div></button>
+      <button type="button" class="icon-btn" data-act="sheet-del" data-id="${id}" aria-label="삭제">✕</button></div>`;
+  }).join('') || '<div class="empty">체크리스트가 없습니다.</div>';
+}
+function openList() { flushSave(); renderList(); $('#listDim').classList.add('on'); }
+function closeList() { $('#listDim').classList.remove('on'); }
+function afterSwitch(msg) { updateSheetCount(); closeList(); curMember = 0; renderAll(); showTab('1'); if (msg) toast(msg); }
+function reverseRoute(v) { const m = String(v || '').match(/^([A-Z]{3})-([A-Z]{3})$/); if (!m) return ''; const r = m[2] + '-' + m[1]; return ROUTES.some(([, l]) => l.includes(r)) ? r : ''; }
+function newSheet(asReturn) {
+  flushSave();
+  const prev = S, st = blankState();
+  if (asReturn) {
+    st.info = Object.assign({}, prev.info, { route: reverseRoute(prev.info.route) });
+    st.fat = JSON.parse(JSON.stringify(prev.fat));
+    if (st.fat.crew === '3' || st.fat.crew === '4') st.fat.members.forEach(m => { if (!(st.fat.crew === '3' && m.role === 'FO')) m.duty = oppDuty(m.duty); });   // 복편은 이착륙/ENROUTE 담당을 서로 바꿈
+    st.fat.members.forEach(m => Object.assign(m, blankTod()));      // 근무 전(Part 1~3)은 같은 근무라 그대로, TOD는 새로
+  }
+  IDX.cur = newId(); IDX.ids.push(IDX.cur); S = st; persist(); saveIdx();
+  afterSwitch(asReturn ? `복편 체크리스트를 만들었습니다${st.info.route ? ' (' + st.info.route + ')' : ''}.` : '새 체크리스트를 만들었습니다.');
+}
+function openSheet(id) {
+  if (id === IDX.cur) { closeList(); return; }
+  flushSave(); const st = readSheet(id); if (!st) { toast('열지 못했습니다.'); renderList(); return; }
+  IDX.cur = id; S = st; saveIdx(); afterSwitch(sheetTitle(S) + ' 을(를) 열었습니다.');
+}
+function delSheet(id) {
+  const st = id === IDX.cur ? S : readSheet(id); if (!st) return;
+  askConfirm({ title: sheetTitle(st) + ' 삭제', msg: st.sentAt ? '이 체크리스트를 목록에서 지웁니다.' : '아직 보내지 않은 체크리스트입니다. 지우면 되돌릴 수 없습니다.', ok: '삭제', danger: true }, () => {
+    if (id === IDX.cur) { clearTimeout(saveTimer); saveTimer = null; }
+    try { localStorage.removeItem(SHEET_PREFIX + id); } catch (e) {}
+    IDX.ids = IDX.ids.filter(x => x !== id);
+    if (!IDX.ids.length) { IDX.cur = newId(); IDX.ids.push(IDX.cur); S = blankState(); persist(); }
+    else if (id === IDX.cur) { IDX.cur = IDX.ids[IDX.ids.length - 1]; S = readSheet(IDX.cur) || blankState(); }
+    saveIdx(); updateSheetCount(); curMember = 0; renderAll(); renderList(); $('#listDim').classList.add('on'); toast('체크리스트를 지웠습니다.');
+  });
+}
+function markSent() { S.sentAt = new Date().toISOString(); persist(); }
+
+/* ── RESET ── */
+let pendingReset = null;
+function openReset() { $('#resetStep1').hidden = false; $('#resetStep2').hidden = true; $('#resetDim').classList.add('on'); }
+function closeReset() { $('#resetDim').classList.remove('on'); pendingReset = null; }
+function askReset(which) {
+  pendingReset = which;
+  $('#resetMsg').textContent = '지금 열린 체크리스트(' + sheetTitle(S) + ')의 ' + ({ 1: 'Flight Info', 2: '피로 점검', 3: 'Error', all: '모든' }[which]) + ' 입력 내용이 삭제되며 되돌릴 수 없습니다. 다른 체크리스트는 그대로입니다.';
+  $('#resetStep1').hidden = true; $('#resetStep2').hidden = false;
+}
+function doReset() {
+  const w = pendingReset;
+  if (w === '1' || w === 'all') S.info = blankInfo();
+  if (w === '2' || w === 'all') S.fat = blankFat();
+  if (w === '3' || w === 'all') S.recs = [blankRec()];
+  if (w === 'all') S.sentAt = null;
+  closeReset(); curMember = 0; renderAll(); persist(); toast('초기화했습니다.');
+}
+
+/* ════════════════════════════════════════════════════════════════
+ *  JSON — 기존 PE 체크리스트(PE-26)와 같은 records 구조 + 피로 점검 결과
+ * ════════════════════════════════════════════════════════════════ */
+function collectFormData() {
+  applyAutos();
+  const recs = S.recs.filter(k_has);
+  const list = recs.length ? recs : (S.info.route ? [blankRec()] : []);
+  const records = list.map((r, idx) => {
+    const o = { page_no: idx + 1 };
+    REC_KEYS.forEach(k => { o[k] = (k in S.info ? S.info[k] : r[k]) || ''; });
+    return o;
+  });
+  return {
+    export_date: new Date().toISOString(), form_version: 'PE-26', source: 'AIR PREMIA Procedural Error Checklist',
+    records,
+    fatigue: { crew: S.fat.crew ? parseInt(S.fat.crew, 10) : null, members: S.fat.members.map(m => evalMember(m).json).filter(j => j.pre.samnPerelli !== null || j.tod) },
+    build: BUILD
+  };
+}
+const fileBase = () => { const a = (S.info.route || '').trim().replace(/[\\/:*?"<>|\s]+/g, '') || 'NoRoute'; return { a, d: (S.info.date || new Date().toISOString().slice(0, 10)) }; };
+function makeJsonFile() { const { a, d } = fileBase(); return new File([JSON.stringify(collectFormData(), null, 2)], `PE_data_${a}_${d}.json`, { type: 'application/json' }); }
+function makePdfFile() { const { a, d } = fileBase(); return new File([buildPdfBlob()], `PE_${a}_${d}.pdf`, { type: 'application/pdf' }); }
+
+function canShareFiles(list) { try { return !!(navigator.share && navigator.canShare && navigator.canShare({ files: list })); } catch (e) { return false; } }
+function downloadFiles(files, doneMsg) {
+  files.forEach((f, k) => setTimeout(() => {
+    const url = URL.createObjectURL(f);
+    const a = document.createElement('a'); a.href = url; a.download = f.name; a.style.display = 'none';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { a.remove(); URL.revokeObjectURL(url); }, 2000);
+  }, k * 700));
+  toast(doneMsg || `${files.map(f => f.name).join(', ')} 을(를) 저장했습니다.`, null, null, 5000);
+}
+// 공유 시트는 '버튼을 누른 그 순간'에만 열림. 그래서 이 함수는 항상 버튼 터치 안에서 동기적으로 불림.
+function shareFiles(files, doneMsg, onSent) {
+  const names = files.map(f => f.name).join(', ');
+  if (canShareFiles(files)) {
+    navigator.share({ files, title: files[0].name.replace(/\.\w+$/, '') })
+      .then(() => { toast(`${names} 보내기 완료`); if (onSent) onSent(); })
+      .catch(err => {
+        if (err && err.name === 'AbortError') return;               // 사용자가 공유 창을 닫음
+        toast('공유 창을 열지 못했습니다.', '다시 열기', () => shareFiles(files, doneMsg, onSent), 12000);
+      });
+    return;
+  }
+  if (files.length > 1 && canShareFiles([files[0]])) return shareOneByOne(files, 0, onSent);   // 여러 파일 동시 공유를 못 하는 기기
+  downloadFiles(files, doneMsg); if (onSent) onSent();
+}
+function shareOneByOne(files, k, onSent) {
+  navigator.share({ files: [files[k]], title: files[k].name }).then(() => {
+    if (k + 1 < files.length) toast(`${files[k].name} 완료`, `${files[k + 1].name} 보내기`, () => shareOneByOne(files, k + 1, onSent), 0);
+    else { toast('보내기 완료'); if (onSent) onSent(); }
+  }).catch(err => {
+    if (err && err.name === 'AbortError') return;
+    toast('공유 창을 열지 못했습니다.', '다시 열기', () => shareOneByOne(files, k, onSent), 12000);
+  });
+}
+function exportJSON() { flushSave(); shareFiles([makeJsonFile()]); }
+function sendAll() {
+  flushSave();
+  const miss = [];
+  if (!S.info.route) miss.push('Route');
+  if (!S.recs.filter(k_has).length) miss.push('Error 기록');
+  if (miss.length) { askConfirm({ title: miss.join(', ') + '이(가) 비어 있습니다', msg: '그래도 보낼까요?', ok: '보내기' }, doSend); return; }
+  doSend();
+}
+function doSend() {
+  let files;
+  try { files = [makePdfFile(), makeJsonFile()]; }
+  catch (err) { console.error(err); toast('PDF를 만들지 못했습니다.', 'JSON만 보내기', exportJSON, 0); return; }
+  shareFiles(files, null, markSent);
+}
+
+/* ── PDF : A4 세로 ── */
+const PG = { W: 210, H: 297, M: 12, S: 6 };            // mm, 1mm = 6px (약 152dpi)
+PG.BOT = PG.H - PG.M - 7;                               // 본문이 내려갈 수 있는 맨 아래 (꼬리말 위)
+const P_NAVY = '#1D2951', P_TH = '#e8ebf3', P_LAB = '#f3f5f9';
+const P_FONT = '-apple-system,"SF Pro Text","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",Arial,sans-serif';
+const PT = 0.3528, PADX = 1.6, PADY = 1.4, LH = 1.42;
+const pxm = v => v * PG.S;
+const dv = v => (v === undefined || v === null || String(v).trim() === '' || v === '-') ? '-' : String(v);
+
+function renderPages(total) {
+  const out = []; let cv = null, g = null, y = 0, n = 0, label = '', onNew = null, top = 0;
+  const info = S.info, num = info.date || '';
+  const routeTxt = info.route || '';
+  const X = PG.M, W = PG.W - PG.M * 2;
+
+  const font = (pt, b, it) => { g.font = `${it ? 'italic ' : ''}${b ? '800' : '400'} ${pxm(pt * PT)}px ${P_FONT}`; };
+  function text(t, x, yy, pt, o = {}) { font(pt, o.b, o.i); g.fillStyle = o.c || '#000'; g.textAlign = o.al || 'left'; g.fillText(t, pxm(x), pxm(yy)); }
+  function rect(x, yy, w, h, fill) {
+    if (fill) { g.fillStyle = fill; g.fillRect(pxm(x), pxm(yy), pxm(w), pxm(h)); }
+    g.strokeStyle = P_NAVY; g.lineWidth = pxm(0.25); g.strokeRect(pxm(x), pxm(yy), pxm(w), pxm(h));
+  }
+  function hline(x1, yy, x2, lw) { g.strokeStyle = P_NAVY; g.lineWidth = pxm(lw || 0.25); g.beginPath(); g.moveTo(pxm(x1), pxm(yy)); g.lineTo(pxm(x2), pxm(yy)); g.stroke(); }
+  function wrap(t, pt, b, maxW) {
+    font(pt, b); const lim = pxm(maxW), fits = s => g.measureText(s).width <= lim, res = [];
+    String(t == null ? '' : t).replace(/\r/g, '').split('\n').forEach(para => {
+      let line = '';
+      para.split(/(\s+)/).forEach(tok => {
+        if (!tok) return;
+        if (fits(line + tok)) { line += tok; return; }
+        if (line.trim()) res.push(line.replace(/\s+$/, ''));
+        line = tok.replace(/^\s+/, '');
+        if (!fits(line)) {                                   // 한 단어가 칸보다 길면 글자 단위로 자름
+          let cur = '';
+          for (const ch of line) { if (fits(cur + ch)) cur += ch; else { if (cur) res.push(cur); cur = ch; } }
+          line = cur;
+        }
+      });
+      res.push(line.replace(/\s+$/, ''));
+    });
+    return res;
+  }
+
+  function finishPage() {
+    if (!cv) return;
+    const fy = PG.H - PG.M - 4;
+    hline(X, fy, X + W, 0.25);
+    text('PROCEDURAL ERROR CHECKLIST · PE-26', X, fy + 1.2, 7, { b: 1, c: P_NAVY });
+    text(total ? `${n} / ${total}` : String(n), X + W / 2, fy + 1.2, 7, { b: 1, c: P_NAVY, al: 'center' });
+    text('BUILD ' + BUILD, X + W, fy + 1.2, 7, { b: 1, c: P_NAVY, al: 'right' });
+    if (total) out.push(cv.toDataURL('image/jpeg', 0.88));
+    cv.width = cv.height = 0; cv = null; g = null;          // iPad 메모리 아끼기: 페이지마다 바로 비움
+  }
+  function newPage(lbl, first) {
+    finishPage(); n++; if (lbl) label = lbl;
+    cv = document.createElement('canvas'); cv.width = pxm(PG.W); cv.height = pxm(PG.H);
+    g = cv.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); g.textBaseline = 'top';
+    y = PG.M;
+    if (first) { text('Procedural Error Checklist', PG.W / 2, y, 17, { b: 1, c: P_NAVY, al: 'center' }); y += 9.5; }
+    text(num, X, y, 8.5, { b: 1, c: P_NAVY });
+    text(routeTxt, PG.W / 2, y, 8.5, { b: 1, c: P_NAVY, al: 'center' });
+    text(label, X + W, y, 8.5, { b: 1, c: P_NAVY, al: 'right' });
+    y += 4.4; hline(X, y, X + W, 0.42); y += 4;
+    if (onNew) onNew();
+    top = y;
+  }
+  function secBar(t) { g.fillStyle = P_NAVY; g.fillRect(pxm(X), pxm(y), pxm(W), pxm(6.6)); text(t.toUpperCase(), PG.W / 2, y + 1.6, 10, { b: 1, c: '#fff', al: 'center' }); y += 6.6 + 3; }
+  function subHead(t) { if (y + 14 > PG.BOT) newPage(); y += 1.5; text(t.toUpperCase(), X, y, 10.5, { b: 1, c: P_NAVY }); y += 6; }
+  function none(t) { text(t, X, y + 2, 9.5, { i: 1, c: '#666' }); y += 9; }
+
+  // 칸(cell): { t, w, b, al, bg, pt, c, th(머리칸), lab(항목칸) }
+  function prep(cells, totalW) {
+    let fixed = 0, flex = 0; cells.forEach(c => c.w ? fixed += c.w : flex++);
+    const fw = flex ? (totalW - fixed) / flex : 0;
+    return cells.map(c0 => {
+      const c = Object.assign({}, c0);
+      if (c.th) { c.bg = c.bg || P_TH; c.pt = c.pt || 7.5; c.b = 1; c.c = P_NAVY; c.al = c.al || 'center'; c.t = String(c.t || '').toUpperCase(); }
+      if (c.lab) { c.bg = P_LAB; c.pt = 8; c.b = 1; c.c = P_NAVY; c.t = String(c.t || '').toUpperCase(); }
+      c.w = c.w || fw; c.pt = c.pt || 8.5; c.lh = c.pt * PT * LH;
+      c.lines = wrap(c.t, c.pt, c.b, c.w - PADX * 2); c.h = c.lines.length * c.lh + PADY * 2;
+      return c;
+    });
+  }
+  const rowH = (cs, min) => Math.max(min || 0, ...cs.map(c => c.h));
+  function drawRow(cs, x, yy, h) {
+    let cx = x;
+    cs.forEach(c => {
+      rect(cx, yy, c.w, h, c.bg);
+      const ty = yy + (h - c.lines.length * c.lh) / 2;
+      const tx = c.al === 'center' ? cx + c.w / 2 : c.al === 'right' ? cx + c.w - PADX : cx + PADX;
+      c.lines.forEach((ln, k) => text(ln, tx, ty + k * c.lh + (c.lh - c.pt * PT) / 2, c.pt, { b: c.b, c: c.c, al: c.al }));
+      cx += c.w;
+    });
+  }
+  function table(rows) { rows.forEach(r => { const cs = prep(r, W), h = rowH(cs); if (y + h > PG.BOT) newPage(); drawRow(cs, X, y, h); y += h; }); }
+
+  // 묶음(block): 왼쪽 번호칸(id) + 위쪽 고정 줄(rows) + 아래 긴 글(tail). 긴 글은 페이지를 넘겨 이어짐.
+  function block(b) {
+    const idW = b.id ? b.id.w : 0, x = X + idW, w = W - idW;
+    const rows = (b.rows || []).map(r => { const cs = prep(r, w); return { cs, h: rowH(cs) }; });
+    const headH = rows.reduce((a, r) => a + r.h, 0);
+    const tpt = b.tail.pt || 9.5, tlh = tpt * PT * LH, tmin = b.tail.min || 0;
+    const lines = String(b.tail.t || '').trim() ? wrap(b.tail.t, tpt, false, w - PADX * 2) : [];
+    const whole = headH + Math.max(tmin, lines.length * tlh + PADY * 2);
+    const fitsFresh = whole <= PG.BOT - top;
+    if (y + whole > PG.BOT && y > top + 0.5 && (fitsFresh || y + headH + Math.min(whole - headH, 3 * tlh + PADY * 2) > PG.BOT)) newPage();
+    let segTop = y;
+    const drawId = bot => {
+      if (!b.id || bot - segTop < 0.1) return;
+      rect(X, segTop, idW, bot - segTop, b.id.bg);
+      const pt = b.id.pt || 11, lh = pt * PT * LH, ls = wrap(b.id.t, pt, true, idW - PADX * 2);
+      const ty = segTop + (bot - segTop - ls.length * lh) / 2;
+      ls.forEach((ln, k) => text(ln, X + idW / 2, ty + k * lh + (lh - pt * PT) / 2, pt, { b: 1, c: P_NAVY, al: 'center' }));
+    };
+    const drawTail = (a, z, yy, h) => {
+      rect(x, yy, w, h, null);
+      lines.slice(a, z).forEach((ln, k) => text(ln, x + PADX, yy + PADY + k * tlh + (tlh - tpt * PT) / 2, tpt));
+    };
+    rows.forEach(r => { drawRow(r.cs, x, y, r.h); y += r.h; });
+    let i = 0, first = true;
+    for (let guard = 0; guard < 200; guard++) {
+      const avail = PG.BOT - y, left = lines.length - i;
+      const need = Math.max(first ? tmin : 0, left * tlh + PADY * 2);
+      if (need <= avail) { drawTail(i, lines.length, y, need); y += need; break; }
+      const fit = Math.floor((avail - PADY * 2) / tlh);
+      if (fit >= left) { drawTail(i, lines.length, y, avail); y = PG.BOT; break; }
+      if (fit >= 1) { drawTail(i, i + fit, y, avail); i += fit; y = PG.BOT; }
+      drawId(y); newPage(); segTop = y; first = false;
+    }
+    drawId(y); y += (b.gap === undefined ? 3.5 : b.gap);
+  }
+
+  /* ── PE 내용 ── */
+  applyAutos();
+  const recs = S.recs.filter(k_has), fat = S.fat;
+  const L4 = (a, av, b, bv) => [{ t: a, w: 30, lab: 1 }, { t: dv(av) }, { t: b, w: 30, lab: 1 }, { t: b ? dv(bv) : '' }];
+  const L2 = (a, av) => [{ t: a, w: 30, lab: 1 }, { t: dv(av) }];
+  const yesno = v => v == null ? '-' : v === '1' ? '예' : '아니오';
+  const gtxt = g => g === null ? '-' : FG[g];
+
+  newPage('Flight Info · Fatigue', true);
+  secBar('1. Flight Information');
+  table([L4('Date', info.date, 'Route', info.route), L4('TKO / LAND', info.tko_land, 'Auditor', info.auditor), L2('Errors', String(recs.length))]);
+  y += 4;
+  secBar('2. Crew Fatigue Check');
+  table([L2('편성', fat.crew ? ({ 2: '2 PILOT (1 SET)', 3: '3 PILOT (2 CAPT · 1 FO)', 4: '4 PILOT (2 SET)' })[fat.crew] : '-')]);
+  y += 3;
+  const ev = fat.members.map(m => ({ m, e: evalMember(m) })).filter(x => x.e.answered || x.e.hasTod);
+  if (!ev.length) none('No fatigue check recorded');
+  else {
+    table([[{ t: 'Crew', w: 22, th: 1 }, { t: 'Duty', w: 22, th: 1 }, { t: '근무 전 SP', th: 1 }, { t: '근무 전 등급', th: 1 }, { t: 'TOD SP', th: 1 }, { t: 'TOD 등급', th: 1 }, { t: 'PE 출발 단계', th: 1 }, { t: 'PE 착륙 단계', th: 1 }]].concat(
+      ev.map(({ m, e }) => [{ t: m.role, w: 22, b: 1, al: 'center', c: P_NAVY }, { t: e.aug ? (DUTY_LABEL[m.duty] || '-') : '2 PILOT', w: 22, al: 'center' }, { t: e.sp ?? '-', al: 'center' }, { t: e.answered ? FG[e.pre.g] : '-', al: 'center', b: 1 }, { t: e.sptod ?? '-', al: 'center' }, { t: e.hasTod ? FG[e.tod.g] : '-', al: 'center', b: 1 }, { t: gtxt(e.depG), al: 'center', b: 1 }, { t: gtxt(e.arrG), al: 'center', b: 1 }])));
+    y += 4;
+    subHead('Fatigue check details');
+    ev.forEach(({ m, e }) => {
+      const rows = [
+        [{ t: '24h 수면', th: 1 }, { t: '인천 출발 전 72h 시차 복귀', th: 1 }, { t: '신체시계', th: 1 }, { t: '시차 수면 방해', th: 1 }],
+        [{ t: m.s24 ? S24T[m.s24] : '-', al: 'center' }, { t: icnDep() ? yesno(m.tz) : '해당 없음', al: 'center' }, { t: CLOCKT[m.clock] || '-', al: 'center' }, { t: yesno(m.jls), al: 'center' }],
+        [{ t: 'TOD SP', th: 1 }, { t: '배정 휴식', th: 1 }, { t: '기내 수면', th: 1 }],
+        [{ t: e.hasTod ? m.sptod : '-', al: 'center' }, { t: e.hasTod && m.opp ? OPPT[m.opp] : '-', al: 'center' }, { t: e.hasTod && m.rest != null ? RESTT[m.rest] : '-', al: 'center' }]
+      ];
+      block({ id: { t: m.role, w: 22, pt: 9, bg: P_LAB }, rows, tail: { t: '[PE 출발 단계] ' + e.depT.join(' / ') + '\n[PE 착륙 단계] ' + (e.arrT.join(' / ') || '-'), pt: 8.5, min: 10 } });
+    });
+  }
+
+  /* Errors — 한 장에 하나 */
+  if (!recs.length) { newPage('Errors'); secBar('3. Procedural Errors'); none('No errors recorded'); }
+  recs.forEach((r, k) => {
+    newPage('PE' + (k + 1));
+    secBar('3. Procedural Error — PE' + (k + 1));
+    subHead('Error Identification');
+    table([L4('Phase', r.phase, 'Error Number', r.error_number), L2('Error Code', r.error_code), L4('Error Type', r.error_type, 'Detection Time', r.detection_time), L4('Committed By', r.committed_by, 'Detected By', r.detected_by)]);
+    y += 2;
+    subHead('Crew State');
+    const a = autoFatigue(r), fv = r.fatigue ? r.fatigue + (r.fatigueMode !== 'manual' ? '  (자동: ' + a.why + ')' : '') : '-';
+    table([L4('Fatigue', fv, 'Attention', r.attention), L4('Workload', r.workload, 'Communication', r.communication), L4('Time Pressure', r.time_pressure, '', '')]);
+    y += 2;
+    subHead('CRM Countermeasures');
+    table([L4('Briefing', r.briefing, 'Monitoring', r.monitoring), L4('Cross-check', r.cross_check, 'Challenge', r.challenge), L4('Intervention', r.intervention, '', '')]);
+    y += 2;
+    subHead('Root Cause Classification');
+    table([L2('Root Cause', r.root_cause)]);
+    y += 2;
+    subHead('Remarks');
+    block({ tail: { t: r.remarks, min: 32 } });
+  });
+
+  finishPage();
+  return { count: n, jpegs: out };
+}
+
+function buildPdfBlob() {
+  const count = renderPages(null).count;           // 1차: 전체 쪽수 세기 (꼬리말 "1 / 5" 용)
+  const pages = renderPages(count).jpegs;          // 2차: 실제 그리기
+  return makePdf(pages.map(d => { const b = atob(d.slice(d.indexOf(',') + 1)), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }),
+    pxm(PG.W), pxm(PG.H), 'PE ' + fileBase().a);
+}
+// 최소 구성 PDF 1.4 : 페이지마다 JPEG 한 장을 A4 크기로 깔아 넣음
+function makePdf(jpegs, iw, ih, title) {
+  const enc = new TextEncoder(), parts = [], offs = []; let len = 0;
+  const push = d => { const u = typeof d === 'string' ? enc.encode(d) : d; parts.push(u); len += u.length; };
+  const obj = (id, f) => { offs[id] = len; push(`${id} 0 obj\n`); f(); push('\nendobj\n'); };
+  const A4W = 595.28, A4H = 841.89, n = jpegs.length, maxId = 3 + n * 3;
+  push(new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2D, 0x31, 0x2E, 0x34, 0x0A, 0x25, 0xE2, 0xE3, 0xCF, 0xD3, 0x0A]));  // %PDF-1.4
+  obj(1, () => push('<< /Type /Catalog /Pages 2 0 R >>'));
+  obj(2, () => push(`<< /Type /Pages /Count ${n} /Kids [${jpegs.map((_, i) => `${4 + i * 3} 0 R`).join(' ')}] >>`));
+  obj(3, () => push(`<< /Title (${String(title).replace(/[^\x20-\x7E]/g, '').replace(/[()\\]/g, '')}) /Producer (PE Checklist ${BUILD}) >>`));
+  jpegs.forEach((img, i) => {
+    const pid = 4 + i * 3, cid = pid + 1, iid = pid + 2;
+    obj(pid, () => push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${A4W} ${A4H}] /Resources << /XObject << /Im0 ${iid} 0 R >> >> /Contents ${cid} 0 R >>`));
+    const cs = `q\n${A4W} 0 0 ${A4H} 0 0 cm\n/Im0 Do\nQ\n`;
+    obj(cid, () => push(`<< /Length ${cs.length} >>\nstream\n${cs}endstream`));
+    obj(iid, () => { push(`<< /Type /XObject /Subtype /Image /Width ${iw} /Height ${ih} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${img.length} >>\nstream\n`); push(img); push('\nendstream'); });
+  });
+  const xref = len;
+  let x = `xref\n0 ${maxId + 1}\n0000000000 65535 f \n`;
+  for (let id = 1; id <= maxId; id++) x += String(offs[id]).padStart(10, '0') + ' 00000 n \n';
+  push(x + `trailer\n<< /Size ${maxId + 1} /Root 1 0 R /Info 3 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
+  return new Blob(parts, { type: 'application/pdf' });
+}
+
+/* ── 시작 ── */
+function fitHeader() { document.documentElement.style.setProperty('--hdr', ($('#top').offsetHeight + 6) + 'px'); }
+window.addEventListener('resize', fitHeader);
+const how = load();
+renderGuide(); renderAll(); updateSheetCount();
+$$('.buildTag').forEach(el => el.textContent = 'build ' + BUILD);
+let tab = '1'; try { tab = sessionStorage.getItem('pe_tab') || '1'; } catch (e) {}
+showTab(tab); fitHeader();
+if (how === 'migrated') toast('기존 체크리스트에 작성 중이던 내용을 불러왔습니다.');
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+</script>
+</body>
+</html>
