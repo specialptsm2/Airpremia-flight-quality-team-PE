@@ -1,0 +1,13 @@
+{
+  "name": "Procedural Error Checklist (PE-26)",
+  "short_name": "PE Check",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#eef0f5",
+  "theme_color": "#1D2951",
+  "icons": [
+    { "src": "app-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
